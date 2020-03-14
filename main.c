@@ -27,17 +27,17 @@ void main(void)
                 scanf("%d", &n);
                 for(int i = 0; i < n; i++)
                 {
-                    r= rand()%(n*10);
-                    printf("entering: %d\n",r);
-                    ajout_bloc(r);
+                    printf("Message à envoyer");
+                    scanf("%s", &data.message);
+                    ajout_bloc(data);
                 }
                 break;
             case 3:
                 printf("wwhich block to alter?: \n");
                 scanf("%d", &n);
-                printf("enter value: ");
-                scanf("%d", &r);
-                alterNthBlock(n,r);
+                printf("enter message: ");
+                scanf("%s", &data.message);
+                alterNthBlock(n,data);
                 break;
             case 4:
                 printAllBlock();
