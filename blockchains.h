@@ -13,13 +13,13 @@ typedef struct{
 
 struct bloc{
     char precHash[SHA256_DIGEST_LENGTH];
-    Donnee donnee;
-    struct bloc *lien
+    Donnee* donnee;
+    struct bloc *lien;
 }*Genesis;
 
-void ajout_bloc(Donnee message);
+void ajout_bloc(Donnee* message);
 void verifyChain(void);
-void alterNthBlock(int n, int newData);
+void alterNthBlock(int n, Donnee* newData);
 void hackChain(void);
 unsigned char *toString(struct bloc blocks);
 void hashPrinter(unsigned char hash[], int length);
