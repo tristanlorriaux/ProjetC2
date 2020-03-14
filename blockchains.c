@@ -1,7 +1,7 @@
-#include "blockchains.h"
+#include "blockchain.h"
 
 
-void ajout_bloc(Donnee message){
+void ajout_bloc(Donnee* message){
     if(Genesis=NULL)//Initialisation de la blockhain
     {
         Genesis=malloc(sizeof(struct bloc));
@@ -43,7 +43,7 @@ void verifyChain(void )
         curr = curr->lien;
     }
 }
-void alterNthbloc(int n, Donnee newData)
+void alterNthbloc(int n, Donnee* newData)
 {
     struct bloc * curr = Genesis;
     if(curr == NULL)
