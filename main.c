@@ -1,9 +1,10 @@
-#include "blockchains.c"
+#include "blockchains.h"
 
 
 void main(void)
 {
     int c, n, r;
+    Donnee data;
     printf("1. addBlock \n");
     printf("2. add n random block \n");
     printf("3. alterNthBlock \n");
@@ -17,9 +18,9 @@ void main(void)
         switch(c)
         {
             case 1:
-                printf("Enter data: \n");
-                scanf("%d", &n);
-                ajout_bloc(n);
+                printf("Entrer message: \n");
+                scanf("%s", &data.message);
+                ajout_bloc(data);
                 break;
             case 2:
                 printf("How many blocks to enter?: ");
