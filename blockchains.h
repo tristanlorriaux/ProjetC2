@@ -19,13 +19,10 @@ struct bloc{
 
 void ajout_bloc(Donnee* message);
 void verifyChain(void);
-void alterNthBlock(int n, Donnee* newData);
+void alterNthbloc(int n, Donnee* newData);
 void hackChain(void);
 unsigned char *toString(struct bloc blocks);
 void hashPrinter(unsigned char hash[], int length);
 int hashCompare(unsigned char *str1, unsigned char *str2);
-void printBloc(struct bloc *blocs);
-void printAllBlock(void);
-
-
-
+void printbloc(struct bloc *blocs);
+void printAllblocs(void);
