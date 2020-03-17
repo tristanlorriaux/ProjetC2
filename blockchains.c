@@ -8,7 +8,7 @@ void ajout_bloc(Donnee* message){
         SHA256("", sizeof(""),Genesis->precHash);
     }
     struct bloc *currentbloc=Genesis;
-    while(currentbloc->lien)//Idem aux listes chaînées
+    while(currentbloc->lien)//Idem que les listes chaînées
     {
         currentbloc=currentbloc->lien;
     }
@@ -23,7 +23,7 @@ void verifyChain(void )
 {
     if (Genesis == NULL)
     {
-        printf("blocChain is emty! try again after adding some blocs");
+        printf("La blockchain est vide : ajouter un bloc. \n");
         return;
     }
     struct bloc *curr = Genesis->lien;
@@ -31,10 +31,10 @@ void verifyChain(void )
     int count = 1;
     while(curr)
     {
-        printf("%d\t[%d]\t",count++, curr->donnee);
-        hashPrinter(SHA256(toString(*prev), sizeof(*prev), NULL),SHA256_DIGEST_LENGTH);
+        printf("%d\t[%d;%d;%d]\t",count++, curr->donnee->dest, curr->donnee->exp, curr->donnee->message);//Print du bloc
+        hashPrinter(SHA256(toString(*prev), sizeof(*prev), NULL),SHA256_DIGEST_LENGTH);//Print de son hash
         printf(" - ");
-        hashPrinter(curr->precHash,SHA256_DIGEST_LENGTH);
+        hashPrinter(curr->precHash,SHA256_DIGEST_LENGTH);//Print du précédent Hash
         if(hashCompare(SHA256(toString(*prev), sizeof(*prev), NULL), curr->precHash))
             printf(" Verified!\n");
         else
@@ -48,7 +48,7 @@ void alterNthbloc(int n, Donnee* newData)
     struct bloc * curr = Genesis;
     if(curr == NULL)
     {
-        printf("Nth bloc does ot exist! \n");
+        printf("Le N-ième bloc n'existe pas \n");
         return;
     }
     int count = 1;
@@ -56,7 +56,7 @@ void alterNthbloc(int n, Donnee* newData)
     {
         if(curr->lien == NULL && count != n)
         {
-            printf("Nth bloc does not exist!\n");
+            printf("Le N-ième bloc n'existe pas!\n");
             return;
         }
         else if(count == n)
@@ -64,11 +64,11 @@ void alterNthbloc(int n, Donnee* newData)
         curr = curr->lien;
         count++;
     }
-    printf("before: ");
-    printBloc(curr);
+    printf("Ancien Bloc: ");
+    printbloc(curr);
     curr->donnee = newData;
-    printf("\n After");
-    printBloc(curr);
+    printf("\n Nouveau Bloc");
+    printbloc(curr);
     printf("\n");
 }
 
@@ -79,7 +79,7 @@ void hackChain(void)
 
     if(curr == NULL)
     {
-        printf("blocChain is emty!\n");
+        printf("La blockchain est vide\n");
         return;
     }
 
@@ -99,7 +99,7 @@ void hackChain(void)
     }
 }
 
-unsigned char *toString(struct bloc blocs)
+unsigned char *toString(struct bloc blocs) //conversion d'un bloc en chaîne de caractères
 {
     unsigned char *str = malloc(sizeof(unsigned char )*sizeof(blocs));
     memcpy(str, &blocs, sizeof(blocs));
@@ -122,15 +122,15 @@ int hashCompare(unsigned char *str1, unsigned char *str2)
     return 1;
 }
 
-void printbloc(struct bloc *blocs)
+void printbloc(struct bloc *bloc)
 {
-    printf("%p]\n", blocs);
-    hashPrinter(blocs->precHash, sizeof(blocs->precHash));
-    printf("\t[%d]\t", blocs->donnee);
-    printf("%p\n",blocs->lien);
+    printf("%p]\n", bloc);
+    hashPrinter(bloc->precHash, sizeof(bloc->precHash));
+    printf("\t[%d;%d;%d]\t", bloc->donnee->dest, bloc->donnee->exp, bloc->donnee->message);
+    printf("%p\n",bloc->lien);
 }
 
-void printAllbloc(void)
+void printAllblocs(void)
 {
     struct bloc * curr = Genesis;
     int count = 0;
