@@ -5,24 +5,29 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define N 200 //Taille max de la blockchain
+
 typedef struct{
-    char message;
-    char exp;
-    char dest;
+    char *message;
+    char *exp;
+    char *dest;
+    char *date;    
 }Donnee;
 
 struct bloc{
-    char precHash[SHA256_DIGEST_LENGTH];
+    unsigned char precHash[SHA256_DIGEST_LENGTH];
+    unsigned char Hash[SHA256_DIGEST_LENGTH];
     Donnee* donnee;
+    int index;
     struct bloc *lien;
 }*Genesis;
 
-void ajout_bloc(Donnee* message);
+void ajout_block(Donnee* message);
 void verifyChain(void);
-void alterNthbloc(int n, Donnee* newData);
+void alterNthBlock(int n, Donnee* newData);
 void hackChain(void);
-unsigned char *toString(struct bloc blocks);
+unsigned char *toString(struct bloc *blocks);
 void hashPrinter(unsigned char hash[], int length);
 int hashCompare(unsigned char *str1, unsigned char *str2);
-void printbloc(struct bloc *blocs);
-void printAllblocs(void);
+void printBlock(struct bloc *blocs);
+void printAllBlock(void);
