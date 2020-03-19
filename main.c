@@ -4,12 +4,12 @@
 void main(void)
 {
     int c, n, r;
-    Donnee *data;
-    printf("1. Ajouter un bloc \n");
-    printf("2. Ajouter n nouveaux blocs \n");
-    printf("3. Modifier le n-ième bloc \n");
-    printf("4. Imprimer tous les blocs\n");
-    printf("5. Vérifier la chaîne\n");
+    Donnee data;
+    printf("1. addBlock \n");
+    printf("2. add n random block \n");
+    printf("3. alterNthBlock \n");
+    printf("4. printAllBlock\n");
+    printf("5. verifyChain\n");
     printf("6. hackChain\n");
     while(1)
     {
@@ -19,40 +19,28 @@ void main(void)
         {
             case 1:
                 printf("Entrer message: \n");
-                scanf("%s", &data->message);
-                printf("Entrer expediteur: \n");
-                scanf("%s", &data->exp);
-                printf("Entrer destinataire: \n");
-                scanf("%s", &data->dest);
-                ajout_bloc(data);
+                scanf("%s", data.message);
+                ajout_block(&data);
                 break;
             case 2:
-                printf("Combien de nouveaux blocs à ajouter?: ");
+                printf("How many blocks to enter?: ");
                 scanf("%d", &n);
                 for(int i = 0; i < n; i++)
                 {
-                    printf("Entrer message: \n");
-                    scanf("%s", &data->message);
-                    printf("Entrer expediteur: \n");
-                    scanf("%s", &data->exp);
-                    printf("Entrer destinataire: \n");
-                    scanf("%s", &data->dest);
-                    ajout_bloc(data);
+                    printf("Message à envoyer");
+                    scanf("%s", data.message);
+                    ajout_block(&data);
                 }
                 break;
             case 3:
-                printf("Quel bloc à modifier \n");
+                printf("which block to alter?: \n");
                 scanf("%d", &n);
-                printf("Entrer message: \n");
-                scanf("%s", &data->message);
-                printf("Entrer expediteur: \n");
-                scanf("%s", &data->exp);
-                printf("Entrer destinataire: \n");
-                scanf("%s", &data->dest);
-                alterNthbloc(n,data);
+                printf("enter message: ");
+                scanf("%s", data.message);
+                alterNthBlock(n,&data);
                 break;
             case 4:
-                printAllblocs();
+                printAllBlock();
                 break;
             case 5:
                 verifyChain();
