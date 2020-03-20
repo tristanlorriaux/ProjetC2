@@ -1,17 +1,21 @@
 #include "blockchain.h"
 
 
-void main(void)
+int main(void)
 {
-    int c, n, r;
+    int c, n;
     Donnee data;
+    init_Data(&data);
+    Genesis = NULL;
     printf("1. addBlock \n");
     printf("2. add n random block \n");
     printf("3. alterNthBlock \n");
     printf("4. printAllBlock\n");
     printf("5. verifyChain\n");
     printf("6. hackChain\n");
-    while(1)
+    printf("7. Quitter\n");
+    int start = 1;
+    while(start)
     {
         printf("Choice: ");
         scanf("%d",&c);
@@ -20,6 +24,9 @@ void main(void)
             case 1:
                 printf("Entrer message: \n");
                 scanf("%s", data.message);
+                strcpy(data.exp, "moi fréro");
+                strcpy(data.dest, "toi mon reuf");
+                strcpy(data.date, "19/03/2020");
                 ajout_block(&data);
                 break;
             case 2:
@@ -48,8 +55,12 @@ void main(void)
             case 6:
                 hackChain();
                 break;
+            case 7:
+                start = 0;
+                break;
             default : break;
         }
 
     }
+    return 0;
 }
