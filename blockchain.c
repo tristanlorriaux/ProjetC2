@@ -6,27 +6,33 @@ void ajout_block(Donnee* message){
     if(Genesis==NULL)//Initialisation de la blockhain
     {
         Genesis = (struct bloc *)malloc(sizeof(struct bloc));
+        Genesis->donnee = (Donnee*)malloc(sizeof(Donnee));
         Genesis->lien = NULL;
-        Genesis->index = 1;
+        Genesis->index = 0;
         SHA256("", sizeof(""),Genesis->precHash);
-        printf("%s\n", Genesis->precHash);
-        
+        strcpy(Genesis->donnee->date, "");
+        strcpy(Genesis->donnee->dest, "");
+        strcpy(Genesis->donnee->exp, "");
+        strcpy(Genesis->donnee->message, "");
     }
-    struct bloc *currentbloc=Genesis;
+    struct bloc *currentbloc = Genesis;
     while(currentbloc->lien != NULL)//Idem aux listes chaînées
     {
         currentbloc=currentbloc->lien;
     }
     
-    struct bloc *nouv_bloc = (struct bloc *)malloc(sizeof(struct bloc));    
-    currentbloc->lien = nouv_bloc;    
+    struct bloc *nouv_bloc = (struct bloc *)malloc(sizeof(struct bloc));  
+    nouv_bloc->donnee = (Donnee*)malloc(sizeof(Donnee));  
+    currentbloc->lien = nouv_bloc;
+    nouv_bloc->lien = NULL;    
     nouv_bloc->donnee = message;
     nouv_bloc->index = currentbloc->index + 1;
-    //printf("%s\n",toString(currentbloc));
+    
+    
     SHA256(toString(currentbloc), sizeof(*currentbloc),nouv_bloc->precHash);   
-     
+    //printf("current_block : %s\n", nouv_bloc->precHash);
     SHA256(toString(nouv_bloc), sizeof(*nouv_bloc),nouv_bloc->Hash);
-    nouv_bloc->lien = NULL;
+    
 }
 
 void verifyChain(void )
@@ -143,12 +149,15 @@ int hashCompare(unsigned char *str1, unsigned char *str2)
 void printBlock(struct bloc *blocs)
 {
     printf("bloc %d : ", blocs->index);
+    printf("precHash : ");
     hashPrinter(blocs->precHash, sizeof(blocs->precHash));
-    printf("\t[%s]->\t", blocs->donnee->exp);
-    printf("\t[%s]\t", blocs->donnee->dest);
-    printf("\t%s\t", blocs->donnee->date);
-    printf("\t%s\t", blocs->donnee->message);
-    printf("%p\n",blocs->lien);
+    printf(" [%s]->", blocs->donnee->exp);
+    printf("[%s] ", blocs->donnee->dest);
+    printf("%s : ", blocs->donnee->date);
+    printf("%s //", blocs->donnee->message);
+    printf("Hash : ");
+    hashPrinter(blocs->Hash, sizeof(blocs->Hash));
+    printf("  %p\n",blocs->lien);
 }
 
 void printAllBlock(void)
