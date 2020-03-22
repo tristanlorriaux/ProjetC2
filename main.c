@@ -1,11 +1,13 @@
 #include "blockchain.h"
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int main(void)
 {
     int c, n;
-    Donnee data;
-    init_Data(&data);
+    
+    
     Genesis = NULL;
     printf("1. addBlock \n");
     printf("2. add n random block \n");
@@ -19,15 +21,19 @@ int main(void)
     {
         printf("Choice: ");
         scanf("%d",&c);
+        Donnee *data = (Donnee*)malloc(sizeof(Donnee)); ;
+        init_Data(data);
+        printf("%p\n", data);
         switch(c)
         {
             case 1:
+                
                 printf("Entrer message: \n");
-                scanf("%s", data.message);
-                strcpy(data.exp, "moi fréro");
-                strcpy(data.dest, "toi mon reuf");
-                strcpy(data.date, "19/03/2020");
-                ajout_block(&data);
+                scanf("%s", data->message);
+                strcpy(data->exp, "moi fréro");
+                strcpy(data->dest, "toi mon reuf");
+                strcpy(data->date, "19/03/2020");
+                ajout_block(data);
                 break;
             case 2:
                 printf("How many blocks to enter?: ");
@@ -35,16 +41,16 @@ int main(void)
                 for(int i = 0; i < n; i++)
                 {
                     printf("Message à envoyer");
-                    scanf("%s", data.message);
-                    ajout_block(&data);
+                    scanf("%s", data->message);
+                    ajout_block(data);
                 }
                 break;
             case 3:
                 printf("which block to alter?: \n");
                 scanf("%d", &n);
                 printf("enter message: ");
-                scanf("%s", data.message);
-                alterNthBlock(n,&data);
+                scanf("%s", data->message);
+                alterNthBlock(n,data);
                 break;
             case 4:
                 printAllBlock();
