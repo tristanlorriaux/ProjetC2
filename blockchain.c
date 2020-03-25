@@ -2,7 +2,7 @@
 
 
 void ajout_block(Donnee* message){
-    
+
     if(Genesis==NULL)//Initialisation de la blockhain
     {
         Genesis = (struct bloc *)malloc(sizeof(struct bloc));
@@ -18,13 +18,13 @@ void ajout_block(Donnee* message){
     {
         currentbloc=currentbloc->lien;
     }
-    
-    struct bloc *nouv_bloc = (struct bloc *)malloc(sizeof(struct bloc));  
-    nouv_bloc->donnee = (Donnee*)malloc(sizeof(Donnee));  
-    
-    nouv_bloc->lien = NULL;    
+
+    struct bloc *nouv_bloc = (struct bloc *)malloc(sizeof(struct bloc));
+    nouv_bloc->donnee = (Donnee*)malloc(sizeof(Donnee));
+
+    nouv_bloc->lien = NULL;
     nouv_bloc->donnee = message;
-    nouv_bloc->index = currentbloc->index + 1;    
+    nouv_bloc->index = currentbloc->index + 1;
     strcpy(nouv_bloc->precHash, currentbloc->Hash);
     //hash256(nouv_bloc->Hash, toString(nouv_bloc));
     printBlock(nouv_bloc);
@@ -76,17 +76,17 @@ char *toString(struct bloc *bloc)
         return NULL;
 
     char *str = (unsigned char *)malloc(sizeof(unsigned char )*sizeof(bloc));
-    
+
     char b[3];
     char c[32];
-    sprintf(b, "%d", bloc->index);    
+    sprintf(b, "%d", bloc->index);
     strcpy(str, b);
     strcat(str, bloc->precHash);
     strcat(str, bloc->donnee->date);
     strcat(str, bloc->donnee->dest);
     strcat(str, bloc->donnee->exp);
     strcat(str, bloc->donnee->message);
-    sprintf(c, "%ld", bloc->nonce);    
+    sprintf(c, "%ld", bloc->nonce);
     strcat(str, c);
     return str;
 }
@@ -153,7 +153,7 @@ bool HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE])
     char *prefix = malloc(DIFFICULTY + 1);
     memset(prefix, '0', DIFFICULTY);
     prefix[DIFFICULTY] = '\0';
-    
+
     char *checker = NULL;
     checker = strstr(binaryHash, prefix);
 
@@ -169,63 +169,63 @@ void hexToBinary(const char *input, char *output)
 
         switch (input[i])
         {
-        case '0':
-            strcat(output, "0000");
-            break;
-        case '1':
-            strcat(output, "0001");
-            break;
-        case '2':
-            strcat(output, "0010");
-            break;
-        case '3':
-            strcat(output, "0011");
-            break;
-        case '4':
-            strcat(output, "0100");
-            break;
-        case '5':
-            strcat(output, "0101");
-            break;
-        case '6':
-            strcat(output, "0110");
-            break;
-        case '7':
-            strcat(output, "0111");
-            break;
-        case '8':
-            strcat(output, "1000");
-            break;
-        case '9':
-            strcat(output, "1001");
-            break;
-        case 'A':
-        case 'a':
-            strcat(output, "1010");
-            break;
-        case 'B':
-        case 'b':
-            strcat(output, "1011");
-            break;
-        case 'C':
-        case 'c':
-            strcat(output, "1100");
-            break;
-        case 'D':
-        case 'd':
-            strcat(output, "1101");
-            break;
-        case 'E':
-        case 'e':
-            strcat(output, "1110");
-            break;
-        case 'F':
-        case 'f':
-            strcat(output, "1111");
-            break;
-        default:
-            printf("Invalid hexadecimal digit %c\n",
-                   input[i]);
+            case '0':
+                strcat(output, "0000");
+                break;
+            case '1':
+                strcat(output, "0001");
+                break;
+            case '2':
+                strcat(output, "0010");
+                break;
+            case '3':
+                strcat(output, "0011");
+                break;
+            case '4':
+                strcat(output, "0100");
+                break;
+            case '5':
+                strcat(output, "0101");
+                break;
+            case '6':
+                strcat(output, "0110");
+                break;
+            case '7':
+                strcat(output, "0111");
+                break;
+            case '8':
+                strcat(output, "1000");
+                break;
+            case '9':
+                strcat(output, "1001");
+                break;
+            case 'A':
+            case 'a':
+                strcat(output, "1010");
+                break;
+            case 'B':
+            case 'b':
+                strcat(output, "1011");
+                break;
+            case 'C':
+            case 'c':
+                strcat(output, "1100");
+                break;
+            case 'D':
+            case 'd':
+                strcat(output, "1101");
+                break;
+            case 'E':
+            case 'e':
+                strcat(output, "1110");
+                break;
+            case 'F':
+            case 'f':
+                strcat(output, "1111");
+                break;
+            default:
+                printf("Invalid hexadecimal digit %c\n",
+                       input[i]);
         }
         i++;
     }
@@ -255,10 +255,10 @@ bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock)
         printf("%d\n", 2);
         return false;
     }
-    struct bloc *bloc_test = (struct bloc *)malloc(sizeof(struct bloc));  
+    struct bloc *bloc_test = (struct bloc *)malloc(sizeof(struct bloc));
     bloc_test->donnee = (Donnee*)malloc(sizeof(Donnee));
     hash256(bloc_test->Hash, toString(newBlock));
-    
+
     int res = strcmp(bloc_test->Hash, newBlock->Hash);
     if(res != 0)
     {
@@ -270,14 +270,14 @@ bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock)
 
 void calculHash(struct bloc* Bloc)
 {
-    
+
     Bloc->nonce = 0;
     char hash_hex[HASH_HEX_SIZE] = "";
     //hashPrinter(hash_test,HASH_SIZE);
     hash256(Bloc->Hash, toString(Bloc)); // mise à jour du hash
     printf("Hash normal : ");
     hashPrinter(Bloc->Hash,HASH_SIZE);
-    
+
     Hex_Hash(Bloc, hash_hex);
     printf("Hex : %s\n",hash_hex);
     //hashPrinter(hash_test,HASH_SIZE);
@@ -285,14 +285,14 @@ void calculHash(struct bloc* Bloc)
     {
         printf("yo\n");
         Bloc->nonce++;
-        
-        hash256(Bloc, toString(Bloc)); // mise à jour du hash
+
+        hash256(Bloc->Hash, toString(Bloc)); // mise à jour du hash
         printf("nouveau Hash : ");
         hashPrinter(Bloc->Hash,HASH_SIZE);
         strcpy(hash_hex, "");
         Hex_Hash(Bloc, hash_hex);       //Conversion du hash en hex
         printf("nouveau Hex : %s\n",hash_hex);
-        
+
     }
 }
 
@@ -304,7 +304,7 @@ char *Hex_Hash(struct bloc *Bloc, char *output)
 
     unsigned char hash_value[HASH_SIZE];
     hash256(hash_value, bloc_string);
-    
+
     char buffer[3];
     char hex_hash[HASH_HEX_SIZE] = {0};
     for(int i = 0; i < HASH_SIZE; i++) {
