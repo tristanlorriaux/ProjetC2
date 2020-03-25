@@ -12,7 +12,7 @@
 
 #define HASH_SIZE 32
 #define HASH_HEX_SIZE 65
-#define BINARY_SIZE HASH_SIZE * 4 + 1
+#define BINARY_SIZE (HASH_HEX_SIZE*4+1)
 
 typedef struct{
     char message[M];
@@ -34,15 +34,15 @@ void ajout_block(Donnee* message);
 
 
 void hackChain(void);
-unsigned char *toString(struct bloc *blocks);
+char *toString(struct bloc *blocks);
 void hashPrinter(unsigned char hash[], int length);
 int hashCompare(unsigned char *str1, unsigned char *str2);
 void printBlock(struct bloc *blocs);
 void printAllBlock(void);
 void init_Data(Donnee* data);
-int HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE]);
+bool HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE]);
 void hexToBinary(const char *input, char *output);
-void hash256(struct bloc* Bloc, const char *input);
+void hash256(unsigned char *output, const char *input);
 bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock);
 void calculHash(struct bloc* Block);
 char *Hex_Hash(struct bloc *bloc, char *output);
