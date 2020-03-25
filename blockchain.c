@@ -137,17 +137,10 @@ void init_Data(Donnee* data)
     strcpy(data->message, "");
 }
 
-bool startsWith(const char *pre, const char *str)
-{
-    size_t lenpre = strlen(pre),
-           lenstr = strlen(str);
-    bool b = lenstr < lenpre ? false : memcmp(pre, str, lenpre) == 0;
-    //printf("%d\n",b);
-    return b;
-}
 
 
-bool HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE])
+
+int HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE])
 {
     
     char binaryHash[BINARY_SIZE];
@@ -158,7 +151,10 @@ bool HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE])
     memset(prefix, '0', DIFFICULTY);
     prefix[DIFFICULTY] = '\0';
     
-    return startsWith(prefix, Hex);
+    char *checker = NULL;
+    checker = strstr(binaryHash, prefix);
+    printf("cond : %d\n", strcmp(checker, binaryHash));
+    return strcmp(checker, binaryHash);
 }
 
 void hexToBinary(const char *input, char *output)
@@ -256,10 +252,11 @@ bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock)
         printf("%d\n", 2);
         return false;
     }
-    unsigned char hash_test[HASH_SIZE] = "";
-    hash256(hash_test, toString(newBlock));
+    struct bloc *bloc_test = (struct bloc *)malloc(sizeof(struct bloc));  
+    bloc_test->donnee = (Donnee*)malloc(sizeof(Donnee));
+    hash256(bloc_test->Hash, toString(newBlock));
     
-    int res = strcmp(hash_test, newBlock->Hash);
+    int res = strcmp(bloc_test->Hash, newBlock->Hash);
     if(res != 0)
     {
         printf("%d\n", 3);
@@ -272,8 +269,7 @@ void calculHash(struct bloc* Bloc)
 {
     
     Bloc->nonce = 0;
-    const char hash_hex[HASH_SIZE] = "";
-    const char *string_bloc = "";
+    char hash_hex[HASH_HEX_SIZE] = "";
     //hashPrinter(hash_test,HASH_SIZE);
     hash256(Bloc, toString(Bloc)); // mise à jour du hash
     printf("Hash normal : ");
@@ -282,9 +278,9 @@ void calculHash(struct bloc* Bloc)
     Hex_Hash(Bloc, hash_hex);
     printf("Hex : %s\n",hash_hex);
     //hashPrinter(hash_test,HASH_SIZE);
-    bool b = HashMatchesDifficulty(hash_hex);
+    int b = HashMatchesDifficulty(hash_hex);
     printf("bool = %d\n", b);
-    while(!b)
+    while(b != 0)
     {
         printf("yo\n");
         Bloc->nonce++;
