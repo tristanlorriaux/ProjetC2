@@ -70,12 +70,15 @@ void hackChain(void)
     }
 }
 
-unsigned char *toString(struct bloc *bloc)
+char *toString(struct bloc *bloc)
 {
-    unsigned char *str = (unsigned char *)malloc(sizeof(unsigned char )*sizeof(bloc));
+    if(bloc == NULL)
+        return NULL;
+
+    char *str = (unsigned char *)malloc(sizeof(unsigned char )*sizeof(bloc));
     
-    unsigned char b[3];
-    unsigned char c[32];
+    char b[3];
+    char c[32];
     sprintf(b, "%d", bloc->index);    
     strcpy(str, b);
     strcat(str, bloc->precHash);
@@ -140,11 +143,11 @@ void init_Data(Donnee* data)
 
 
 
-int HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE])
+bool HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE])
 {
-    
     char binaryHash[BINARY_SIZE];
     hexToBinary(Hex, binaryHash);
+    printf("bin : %s\n", binaryHash);
 
     // Creation de la chaine de caractère "0"*difficulty
     char *prefix = malloc(DIFFICULTY + 1);
@@ -153,8 +156,8 @@ int HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE])
     
     char *checker = NULL;
     checker = strstr(binaryHash, prefix);
-    printf("cond : %d\n", strcmp(checker, binaryHash));
-    return strcmp(checker, binaryHash);
+
+    return checker == binaryHash;
 }
 
 void hexToBinary(const char *input, char *output)
@@ -228,13 +231,13 @@ void hexToBinary(const char *input, char *output)
     }
 }
 
-void hash256(struct bloc* Bloc, const char *input)
+void hash256(unsigned char *output, const char *input)
 {
 
     size_t length = strlen(input);
     unsigned char md[HASH_SIZE];
     SHA256((const unsigned char*)input, length, md);
-    memcpy(Bloc->Hash,md, HASH_SIZE);
+    memcpy(output,md, HASH_SIZE);
 
     return;
 }
@@ -271,16 +274,14 @@ void calculHash(struct bloc* Bloc)
     Bloc->nonce = 0;
     char hash_hex[HASH_HEX_SIZE] = "";
     //hashPrinter(hash_test,HASH_SIZE);
-    hash256(Bloc, toString(Bloc)); // mise à jour du hash
+    hash256(Bloc->Hash, toString(Bloc)); // mise à jour du hash
     printf("Hash normal : ");
     hashPrinter(Bloc->Hash,HASH_SIZE);
     
     Hex_Hash(Bloc, hash_hex);
     printf("Hex : %s\n",hash_hex);
     //hashPrinter(hash_test,HASH_SIZE);
-    int b = HashMatchesDifficulty(hash_hex);
-    printf("bool = %d\n", b);
-    while(b != 0)
+    while(!HashMatchesDifficulty(hash_hex))
     {
         printf("yo\n");
         Bloc->nonce++;
@@ -291,7 +292,6 @@ void calculHash(struct bloc* Bloc)
         strcpy(hash_hex, "");
         Hex_Hash(Bloc, hash_hex);       //Conversion du hash en hex
         printf("nouveau Hex : %s\n",hash_hex);
-        b = HashMatchesDifficulty(hash_hex);
         
     }
 }
@@ -299,11 +299,11 @@ void calculHash(struct bloc* Bloc)
 char *Hex_Hash(struct bloc *Bloc, char *output)
 {
 
-    /*char bloc_string[100];
-    strcpy(bloc_string, toString(bloc));*/
+    char bloc_string[100];
+    strcpy(bloc_string, toString(Bloc));
 
-    unsigned char hash_value[HASH_SIZE] = "";
-    strcpy(hash_value, Bloc->Hash);
+    unsigned char hash_value[HASH_SIZE];
+    hash256(hash_value, bloc_string);
     
     char buffer[3];
     char hex_hash[HASH_HEX_SIZE] = {0};
