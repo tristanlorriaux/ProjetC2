@@ -23,7 +23,6 @@ int main(void)
         scanf("%d",&c);
         Donnee *data = (Donnee*)malloc(sizeof(Donnee)); ;
         init_Data(data);
-        printf("%p\n", data);
         switch(c)
         {
             case 1:
@@ -50,13 +49,13 @@ int main(void)
                 scanf("%d", &n);
                 printf("enter message: ");
                 scanf("%s", data->message);
-                alterNthBlock(n,data);
+                
                 break;
             case 4:
                 printAllBlock();
                 break;
             case 5:
-                verifyChain();
+               
                 break;
             case 6:
                 hackChain();
