@@ -9,11 +9,9 @@ void ajout_block(Donnee* message){
         Genesis->donnee = (Donnee*)malloc(sizeof(Donnee));
         Genesis->lien = NULL;
         Genesis->index = 0;
-        SHA256("", sizeof(""),Genesis->precHash);
-        strcpy(Genesis->donnee->date, "");
-        strcpy(Genesis->donnee->dest, "");
-        strcpy(Genesis->donnee->exp, "");
-        strcpy(Genesis->donnee->message, "");
+        Genesis->nonce = 0;
+        strcpy(Genesis->precHash, "");
+        init_Data(Genesis->donnee);
     }
     struct bloc *currentbloc = Genesis;
     while(currentbloc->lien != NULL)//Idem aux listes chaînées
@@ -23,71 +21,27 @@ void ajout_block(Donnee* message){
     
     struct bloc *nouv_bloc = (struct bloc *)malloc(sizeof(struct bloc));  
     nouv_bloc->donnee = (Donnee*)malloc(sizeof(Donnee));  
-    currentbloc->lien = nouv_bloc;
+    
     nouv_bloc->lien = NULL;    
     nouv_bloc->donnee = message;
-    nouv_bloc->index = currentbloc->index + 1;
-    
-    
-    SHA256(toString(currentbloc), sizeof(*currentbloc),nouv_bloc->precHash);   
-    //printf("current_block : %s\n", nouv_bloc->precHash);
-    SHA256(toString(nouv_bloc), sizeof(*nouv_bloc),nouv_bloc->Hash);
-    
+    nouv_bloc->index = currentbloc->index + 1;    
+    strcpy(nouv_bloc->precHash, currentbloc->Hash);
+    //hash256(nouv_bloc->Hash, toString(nouv_bloc));
+    printBlock(nouv_bloc);
+    calculHash(nouv_bloc);
+
+    if(IsValidBlock(nouv_bloc,currentbloc))
+    {
+        currentbloc->lien = nouv_bloc;
+    }
+    else
+    {
+        printf("Bloc invalide, espece de hacker va!\n");
+    }
 }
 
-void verifyChain(void )
-{
-    if (Genesis == NULL)
-    {
-        printf("blocChain is emty! try again after adding some blocs\n");
-        return;
-    }
-    struct bloc *curr = Genesis->lien;
-    struct bloc *prev = Genesis;
-    int count = 1;
-    while(curr != NULL)
-    {
-        printf("%d\t[expediteur : %s, destinataire : %s, date : %s, message : %s]\t",count++, curr->donnee->exp,curr->donnee->dest, curr->donnee->date, curr->donnee->message);
-        printf("\n");
-        hashPrinter(SHA256(toString(prev), sizeof(*prev), NULL),SHA256_DIGEST_LENGTH);
-        printf(" - ");
-        hashPrinter(curr->precHash,SHA256_DIGEST_LENGTH);
-        if(hashCompare(SHA256(toString(prev), sizeof(*prev), NULL), curr->precHash))
-            printf(" Verified!\n");
-        else
-            printf("Verification Failed !\n");
-        prev = curr;
-        curr = curr->lien;
-    }
-}
-void alterNthBlock(int n, Donnee* newData)
-{
-    struct bloc * curr = Genesis;
-    if(curr == NULL)
-    {
-        printf("Nth bloc does ot exist! \n");
-        return;
-    }
-    int count = 1;
-    while(count != n)
-    {
-        if(curr->lien == NULL && count != n)
-        {
-            printf("Nth bloc does not exist!\n");
-            return;
-        }
-        else if(count == n)
-            break;
-        curr = curr->lien;
-        count++;
-    }
-    printf("before: ");
-    printBlock(curr);
-    curr->donnee = newData;
-    printf("\n After");
-    printBlock(curr);
-    printf("\n");
-}
+
+
 
 void hackChain(void)
 {
@@ -110,23 +64,27 @@ void hackChain(void)
         {
             hashPrinter(
                     SHA256(toString(prev), sizeof(*prev), curr->precHash),
-                    SHA256_DIGEST_LENGTH);
+                    HASH_SIZE);
             printf("\n");
         }
     }
 }
 
-unsigned char *toString(struct bloc *blocs)
+unsigned char *toString(struct bloc *bloc)
 {
-    unsigned char *str = (unsigned char *)malloc(sizeof(unsigned char )*sizeof(blocs));
+    unsigned char *str = (unsigned char *)malloc(sizeof(unsigned char )*sizeof(bloc));
+    
     unsigned char b[3];
-    sprintf(b, "%d", blocs->index);    
-    strcpy(str, b);    
-    strcat(str, blocs->precHash);    
-    strcat(str, blocs->donnee->date);
-    strcat(str, blocs->donnee->dest);
-    strcat(str, blocs->donnee->exp);
-    strcat(str, blocs->donnee->message);
+    unsigned char c[32];
+    sprintf(b, "%d", bloc->index);    
+    strcpy(str, b);
+    strcat(str, bloc->precHash);
+    strcat(str, bloc->donnee->date);
+    strcat(str, bloc->donnee->dest);
+    strcat(str, bloc->donnee->exp);
+    strcat(str, bloc->donnee->message);
+    sprintf(c, "%ld", bloc->nonce);    
+    strcat(str, c);
     return str;
 }
 
@@ -136,6 +94,7 @@ void hashPrinter(unsigned char hash[], int length)
     {
         printf("%02x",hash[i]);
     }
+    printf("\n");
 }
 
 int hashCompare(unsigned char *str1, unsigned char *str2)
@@ -157,13 +116,12 @@ void printBlock(struct bloc *blocs)
     printf("%s //", blocs->donnee->message);
     printf("Hash : ");
     hashPrinter(blocs->Hash, sizeof(blocs->Hash));
-    printf("  %p\n",blocs->lien);
+    printf("  %p\n\n",blocs->lien);
 }
 
 void printAllBlock(void)
 {
     struct bloc * curr = Genesis;
-    int count = 0;
     while(curr)
     {
         printBlock(curr);
@@ -177,4 +135,191 @@ void init_Data(Donnee* data)
     strcpy(data->dest, "");
     strcpy(data->exp, "");
     strcpy(data->message, "");
+}
+
+bool startsWith(const char *pre, const char *str)
+{
+    size_t lenpre = strlen(pre),
+           lenstr = strlen(str);
+    bool b = lenstr < lenpre ? false : memcmp(pre, str, lenpre) == 0;
+    //printf("%d\n",b);
+    return b;
+}
+
+
+bool HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE])
+{
+    
+    char binaryHash[BINARY_SIZE];
+    hexToBinary(Hex, binaryHash);
+
+    // Creation de la chaine de caractère "0"*difficulty
+    char *prefix = malloc(DIFFICULTY + 1);
+    memset(prefix, '0', DIFFICULTY);
+    prefix[DIFFICULTY] = '\0';
+    
+    return startsWith(prefix, Hex);
+}
+
+void hexToBinary(const char *input, char *output)
+{
+
+    long int i = 0;
+    while (input[i])
+    {
+
+        switch (input[i])
+        {
+        case '0':
+            strcat(output, "0000");
+            break;
+        case '1':
+            strcat(output, "0001");
+            break;
+        case '2':
+            strcat(output, "0010");
+            break;
+        case '3':
+            strcat(output, "0011");
+            break;
+        case '4':
+            strcat(output, "0100");
+            break;
+        case '5':
+            strcat(output, "0101");
+            break;
+        case '6':
+            strcat(output, "0110");
+            break;
+        case '7':
+            strcat(output, "0111");
+            break;
+        case '8':
+            strcat(output, "1000");
+            break;
+        case '9':
+            strcat(output, "1001");
+            break;
+        case 'A':
+        case 'a':
+            strcat(output, "1010");
+            break;
+        case 'B':
+        case 'b':
+            strcat(output, "1011");
+            break;
+        case 'C':
+        case 'c':
+            strcat(output, "1100");
+            break;
+        case 'D':
+        case 'd':
+            strcat(output, "1101");
+            break;
+        case 'E':
+        case 'e':
+            strcat(output, "1110");
+            break;
+        case 'F':
+        case 'f':
+            strcat(output, "1111");
+            break;
+        default:
+            printf("Invalid hexadecimal digit %c\n",
+                   input[i]);
+        }
+        i++;
+    }
+}
+
+void hash256(struct bloc* Bloc, const char *input)
+{
+
+    size_t length = strlen(input);
+    unsigned char md[HASH_SIZE];
+    SHA256((const unsigned char*)input, length, md);
+    memcpy(Bloc->Hash,md, HASH_SIZE);
+
+    return;
+}
+
+bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock)
+{
+    if(previousBlock->index + 1 != newBlock->index)
+    {
+        printf("%d\n", 1);
+        return false;
+    }
+    int ret = strcmp(previousBlock->Hash, newBlock->precHash);
+    if(ret != 0)
+    {
+        printf("%d\n", 2);
+        return false;
+    }
+    unsigned char hash_test[HASH_SIZE] = "";
+    hash256(hash_test, toString(newBlock));
+    
+    int res = strcmp(hash_test, newBlock->Hash);
+    if(res != 0)
+    {
+        printf("%d\n", 3);
+        return false;
+    }
+    return true;
+}
+
+void calculHash(struct bloc* Bloc)
+{
+    
+    Bloc->nonce = 0;
+    const char hash_hex[HASH_SIZE] = "";
+    const char *string_bloc = "";
+    //hashPrinter(hash_test,HASH_SIZE);
+    hash256(Bloc, toString(Bloc)); // mise à jour du hash
+    printf("Hash normal : ");
+    hashPrinter(Bloc->Hash,HASH_SIZE);
+    
+    Hex_Hash(Bloc, hash_hex);
+    printf("Hex : %s\n",hash_hex);
+    //hashPrinter(hash_test,HASH_SIZE);
+    bool b = HashMatchesDifficulty(hash_hex);
+    printf("bool = %d\n", b);
+    while(!b)
+    {
+        printf("yo\n");
+        Bloc->nonce++;
+        
+        hash256(Bloc, toString(Bloc)); // mise à jour du hash
+        printf("nouveau Hash : ");
+        hashPrinter(Bloc->Hash,HASH_SIZE);
+        strcpy(hash_hex, "");
+        Hex_Hash(Bloc, hash_hex);       //Conversion du hash en hex
+        printf("nouveau Hex : %s\n",hash_hex);
+        b = HashMatchesDifficulty(hash_hex);
+        
+    }
+}
+
+char *Hex_Hash(struct bloc *Bloc, char *output)
+{
+
+    /*char bloc_string[100];
+    strcpy(bloc_string, toString(bloc));*/
+
+    unsigned char hash_value[HASH_SIZE] = "";
+    strcpy(hash_value, Bloc->Hash);
+    
+    char buffer[3];
+    char hex_hash[HASH_HEX_SIZE] = {0};
+    for(int i = 0; i < HASH_SIZE; i++) {
+        memset(buffer, 0, sizeof(buffer));
+        sprintf(buffer,"%02x", hash_value[i]);
+        strcat(hex_hash, buffer);
+    }
+
+    strcpy(output,hex_hash);
+
+    output[HASH_HEX_SIZE] = 0;
+
+    return output;
 }
