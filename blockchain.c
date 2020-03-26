@@ -29,7 +29,7 @@ void ajout_block(Donnee* message){
     //hash256(nouv_bloc->Hash, toString(nouv_bloc));
     printBlock(nouv_bloc);
     calculHash(nouv_bloc);
-
+    printf("1 : %s\n",toString(nouv_bloc));
     if(IsValidBlock(nouv_bloc,currentbloc))
     {
         printf("yo\n");
@@ -88,7 +88,7 @@ char *toString(struct bloc *bloc)
     strcat(str, bloc->donnee->dest);
     strcat(str, bloc->donnee->exp);
     strcat(str, bloc->donnee->message);
-    sprintf(c, "%ld", bloc->nonce);    
+    sprintf(c, "%ld", bloc->nonce);
     strcat(str, c);
     return str;
 }
@@ -246,35 +246,25 @@ void hash256(unsigned char *output, const char *input)
 
 bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock)
 {
-    printf("%d %d\n", previousBlock->index,newBlock->index);
-    if(previousBlock->index + 1 != newBlock->index)
+    char hash_to_test[HASH_HEX_SIZE];
+    char hash[HASH_SIZE];
+    printf("2 : %s\n",toString(newBlock));
+    hash256(hash,toString(newBlock));
+    if (previousBlock->index + 1 != newBlock->index)
     {
-        printf("%d\n", 1);
+        printf("\nBlock invalide : indexs invalide (%d + 1 != %d).\n", previousBlock->index, newBlock->index);
         return false;
     }
-    int ret = strcmp(previousBlock->Hash, newBlock->precHash);
-    if(ret != 0)
+    else if (strcmp(previousBlock->Hash, newBlock->precHash) != 0)
     {
-        printf("%d\n", 2);
+        printf("\nBlock invalide : hash précédent invalide.\n");
+        return false;
+    }    
+    else if (strcmp(Hex_Hash(hash, hash_to_test), newBlock->Hash) != 0)
+    {
+        printf("\nBlock invalide: hashs différents (%s != %s)\n", hash_to_test, newBlock->Hash);
         return false;
     }
-    char hash_test[HASH_SIZE];
-    char hash_hex_test[HASH_HEX_SIZE];
-    
-    hash256(hash_test, toString(newBlock));
-    Hex_Hash(hash_test,hash_hex_test);
-    printf("len du test : %d: %s\n", strlen(hash_hex_test),hash_hex_test);
-    
-    printf("len de new_hash : %d: %s\n", strlen(newBlock->Hash), newBlock->Hash);
-    printf("\n");
-    int res = strcmp(hash_hex_test, newBlock->Hash);
-    printf("res : %d\n",res);
-    if(res != 0)
-    {
-        printf("%d\n", 3);
-        return false;
-    }
-    printf("pute\n");
     return true;
 }
 
@@ -310,7 +300,7 @@ void calculHash(struct bloc* Bloc)
 char *Hex_Hash(char *input, char *output)
 {
 
-    char bloc_string[100];
+    char bloc_string[32];
     strcpy(bloc_string, input);
 
     unsigned char hash_value[HASH_SIZE];
