@@ -29,7 +29,7 @@ int main(void)
                 
                 printf("Entrer message: \n");
                 scanf("%s", data->message);
-                strcpy(data->exp, "moi fréro");
+                strcpy(data->exp, "moi frero");
                 strcpy(data->dest, "toi mon reuf");
                 strcpy(data->date, "19/03/2020");
                 ajout_block(data);
