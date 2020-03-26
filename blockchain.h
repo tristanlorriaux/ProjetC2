@@ -12,7 +12,7 @@
 
 #define HASH_SIZE 32
 #define HASH_HEX_SIZE 65
-#define BINARY_SIZE (HASH_HEX_SIZE*4)
+#define BINARY_SIZE (HASH_HEX_SIZE*4+1)
 
 typedef struct{
     char message[M];
@@ -22,8 +22,8 @@ typedef struct{
 }Donnee;
 
 struct bloc{
-    char precHash[HASH_SIZE];
-    char Hash[HASH_SIZE];
+    char precHash[HASH_HEX_SIZE];
+    char Hash[HASH_HEX_SIZE];
     int index;
     Donnee* donnee;
     unsigned long nonce;
@@ -45,5 +45,5 @@ void hexToBinary(char input[HASH_HEX_SIZE], char output[BINARY_SIZE]);
 void hash256(unsigned char *output, const char *input);
 bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock);
 void calculHash(struct bloc* Block);
-char *Hex_Hash(struct bloc *bloc, char *output);
+char *Hex_Hash(char *input, char *output);
 //bool startsWith(const char *pre, const char *str);
