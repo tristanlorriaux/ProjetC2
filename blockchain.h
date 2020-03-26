@@ -8,11 +8,11 @@
 
 #define N 200           //Taille max de la blockchain
 #define M 150           //taille max des messages
-#define DIFFICULTY 3    //Difficulté de la proof of work
+#define DIFFICULTY 4    //Difficulté de la proof of work
 
 #define HASH_SIZE 32
 #define HASH_HEX_SIZE 65
-#define BINARY_SIZE (HASH_HEX_SIZE*4+1)
+#define BINARY_SIZE (HASH_HEX_SIZE*4)
 
 typedef struct{
     char message[M];
@@ -22,8 +22,8 @@ typedef struct{
 }Donnee;
 
 struct bloc{
-    unsigned char precHash[HASH_SIZE];
-    unsigned char Hash[HASH_SIZE];
+    char precHash[HASH_SIZE];
+    char Hash[HASH_SIZE];
     int index;
     Donnee* donnee;
     unsigned long nonce;
@@ -40,8 +40,8 @@ int hashCompare(unsigned char *str1, unsigned char *str2);
 void printBlock(struct bloc *blocs);
 void printAllBlock(void);
 void init_Data(Donnee* data);
-bool HashMatchesDifficulty(const char Hex[HASH_HEX_SIZE]);
-void hexToBinary(const char *input, char *output);
+bool HashMatchesDifficulty(char Hex[HASH_HEX_SIZE]);
+void hexToBinary(char input[HASH_HEX_SIZE], char output[BINARY_SIZE]);
 void hash256(unsigned char *output, const char *input);
 bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock);
 void calculHash(struct bloc* Block);
