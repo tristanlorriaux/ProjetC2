@@ -10,6 +10,9 @@ void ajout_block(Donnee* message){
         Genesis->lien = NULL;
         Genesis->index = 0;
         Genesis->nonce = 0;
+        char* gene_hex[HASH_HEX_SIZE];
+        Hex_Hash("", gene_hex);
+        strcpy(Genesis->Hash, gene_hex); 
         strcpy(Genesis->precHash, "");
         init_Data(Genesis->donnee);
     }
@@ -26,26 +29,30 @@ void ajout_block(Donnee* message){
     nouv_bloc->donnee = message;
     nouv_bloc->index = currentbloc->index + 1;    
     strcpy(nouv_bloc->precHash, currentbloc->Hash);
-    //hash256(nouv_bloc->Hash, toString(nouv_bloc));
-    printBlock(nouv_bloc);
     calculHash(nouv_bloc);
-    printf("1 : %s\n",toString(nouv_bloc));
+
+    char* bloc_string[BLOCK_STR_SIZE];
+    toString(nouv_bloc, bloc_string);
+    printf("bloc_string 2 : %s\n", bloc_string);
+
+
+    
     if(IsValidBlock(nouv_bloc,currentbloc))
-    {
-        printf("yo\n");
+    {   
         currentbloc->lien = nouv_bloc;
+        printf("yo\n");
+        
     }
     else
     {
         printf("Bloc invalide, espece de hacker va!\n");
     }
-    printf("grosse pute\n");
 }
 
 
 
 
-void hackChain(void)
+/*void hackChain(void)
 {
     struct bloc * curr = Genesis;
     struct bloc * prev;
@@ -70,14 +77,12 @@ void hackChain(void)
             printf("\n");
         }
     }
-}
+}*/
 
-char *toString(struct bloc *bloc)
+char *toString(struct bloc *bloc, char *str)
 {
     if(bloc == NULL)
-        return NULL;
-
-    char *str = (unsigned char *)malloc(sizeof(unsigned char )*sizeof(bloc));
+        return NULL;    
     
     char b[3];
     char c[32];
@@ -114,13 +119,13 @@ void printBlock(struct bloc *blocs)
 {
     printf("bloc %d : ", blocs->index);
     printf("precHash : ");
-    hashPrinter(blocs->precHash, sizeof(blocs->precHash));
+    printf(" %s", blocs->precHash);
     printf(" [%s]->", blocs->donnee->exp);
     printf("[%s] ", blocs->donnee->dest);
     printf("%s : ", blocs->donnee->date);
     printf("%s //", blocs->donnee->message);
     printf("Hash : ");
-    hashPrinter(blocs->Hash, sizeof(blocs->Hash));
+    printf(" %s", blocs->Hash);
     printf("  %p\n\n",blocs->lien);
 }
 
@@ -248,8 +253,11 @@ bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock)
 {
     char hash_to_test[HASH_HEX_SIZE];
     char hash[HASH_SIZE];
-    printf("2 : %s\n",toString(newBlock));
-    hash256(hash,toString(newBlock));
+    char bloc_string[BLOCK_STR_SIZE];
+    printBlock(newBlock);
+    hash256(hash,toString(newBlock,bloc_string));
+    printf("bloc_string 1 : %s", bloc_string);
+    Hex_Hash(hash, hash_to_test);
     if (previousBlock->index + 1 != newBlock->index)
     {
         printf("\nBlock invalide : indexs invalide (%d + 1 != %d).\n", previousBlock->index, newBlock->index);
@@ -260,7 +268,7 @@ bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock)
         printf("\nBlock invalide : hash précédent invalide.\n");
         return false;
     }    
-    else if (strcmp(Hex_Hash(hash, hash_to_test), newBlock->Hash) != 0)
+    else if (strcmp(hash_to_test, newBlock->Hash) != 0)
     {
         printf("\nBlock invalide: hashs différents (%s != %s)\n", hash_to_test, newBlock->Hash);
         return false;
@@ -275,26 +283,21 @@ void calculHash(struct bloc* Bloc)
     char hash_hex[HASH_HEX_SIZE];
     char hash[HASH_SIZE];
     //hashPrinter(hash_test,HASH_SIZE);
-    hash256(hash, toString(Bloc)); // mise à jour du hash
-    printf("Hash normal : ");
-    hashPrinter(hash,HASH_SIZE);
+    char bloc_string[BLOCK_STR_SIZE];
+    hash256(hash, toString(Bloc,bloc_string)); // mise à jour du hash
     
     Hex_Hash(hash, hash_hex);
     strcpy(Bloc->Hash, hash_hex);
-    printf("Hex : %s\n",hash_hex);
-    //hashPrinter(hash_test,HASH_SIZE);
+
     while(!HashMatchesDifficulty(hash_hex))
     {
-        printf("yo\n");
         Bloc->nonce++;
-        
-        hash256(hash, toString(Bloc));  // mise à jour du hash
-        Hex_Hash(hash, hash_hex);       //Conversion du hash en hex
-        strcpy(Bloc->Hash, hash_hex);
-        printf("enorme putin : %s\n",Bloc->Hash);
-        printf("nouveau Hex : %s\n",hash_hex);
-        
+        hash256(hash, toString(Bloc,bloc_string));  // mise à jour du hash
+        Hex_Hash(hash, hash_hex);       //Conversion du hash en hex    
+        printf("hex : %s\n", hash_hex);    
     }
+    strcpy(Bloc->Hash, hash_hex);
+    return;
 }
 
 char *Hex_Hash(char *input, char *output)
