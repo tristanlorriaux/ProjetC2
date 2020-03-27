@@ -58,7 +58,7 @@ int main(void)
                
                 break;
             case 6:
-                hackChain();
+                //hackChain();
                 break;
             case 7:
                 start = 0;
