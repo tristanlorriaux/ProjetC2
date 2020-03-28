@@ -5,7 +5,7 @@
 
 int main(void)
 {
-    int c, n;
+    int c;
 
     Genesis = NULL;
     printf("1. INITIALISER LA CHAÎNE ET AJOUTER UN PREMIER BLOCK \n");
