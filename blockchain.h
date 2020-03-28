@@ -27,7 +27,7 @@ struct bloc{
     char Hash[HASH_HEX_SIZE];
     int index;
     Donnee* donnee;
-    unsigned long nonce;
+    int nonce;
     struct bloc *lien;
 }*Genesis;
 
@@ -46,5 +46,5 @@ void hexToBinary(char input[HASH_HEX_SIZE], char output[BINARY_SIZE]);
 void hash256(unsigned char *output, const char *input);
 bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock);
 void calculHash(struct bloc* Block);
-char *Hex_Hash(char *input, char *output);
+char *Hex_Hash(struct bloc *Bloc, char *output);
 //bool startsWith(const char *pre, const char *str);
