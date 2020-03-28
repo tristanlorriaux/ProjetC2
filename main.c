@@ -6,66 +6,39 @@
 int main(void)
 {
     int c, n;
-    
-    
+
     Genesis = NULL;
-    printf("1. addBlock \n");
-    printf("2. add n random block \n");
-    printf("3. alterNthBlock \n");
-    printf("4. printAllBlock\n");
-    printf("5. verifyChain\n");
-    printf("6. hackChain\n");
-    printf("7. Quitter\n");
+    printf("1. INITIALISER LA CHAÎNE ET AJOUTER UN PREMIER BLOCK \n");
+    printf("2. IMPRIMER LA BLOCKCHAIN\n");
+    printf("3. QUITTER\n");
     int start = 1;
     while(start)
     {
-        printf("Choice: ");
+        printf("CHOIX: ");
         scanf("%d",&c);
         Donnee *data = (Donnee*)malloc(sizeof(Donnee)); ;
         init_Data(data);
         switch(c)
         {
             case 1:
-                
                 printf("Entrer message: \n");
                 scanf("%s", data->message);
-                strcpy(data->exp, "moi frero");
-                strcpy(data->dest, "toi mon reuf");
-                strcpy(data->date, "19/03/2020");
+                printf("Entrer expéditeur: \n");
+                scanf("%s", data->exp);
+                printf("Entrer destinataire: \n");
+                scanf("%s", data->dest);
+                printf("Entrer date: \n");
+                scanf("%s", data->date);
                 ajout_block(data);
                 break;
             case 2:
-                printf("How many blocks to enter?: ");
-                scanf("%d", &n);
-                for(int i = 0; i < n; i++)
-                {
-                    printf("Message à envoyer");
-                    scanf("%s", data->message);
-                    ajout_block(data);
-                }
-                break;
-            case 3:
-                printf("which block to alter?: \n");
-                scanf("%d", &n);
-                printf("enter message: ");
-                scanf("%s", data->message);
-                
-                break;
-            case 4:
                 printAllBlock();
                 break;
-            case 5:
-               
-                break;
-            case 6:
-                //hackChain();
-                break;
-            case 7:
+            case 3:
                 start = 0;
                 break;
             default : break;
         }
-
     }
     return 0;
 }
