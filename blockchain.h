@@ -1,12 +1,9 @@
-#include "openssl/sha.h"    //Librairies pour le cryptage
-#include "openssl/crypto.h"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
+#ifndef BLOCKCHAIN_H
+    
+    #define BLOCKCHAIN_H
 
-#define N 200           //Taille max de la blockchain
+    #define N 200           //Taille max de la blockchain
 #define M 150           //Taille max des messages
 #define DIFFICULTY 4    //Difficulté de la proof of work
 
@@ -20,18 +17,18 @@ typedef struct{
     char exp[20];
     char dest[20];
     char date[20];
-}Donnee;
+}donnee;
 
 struct bloc{
     char precHash[HASH_HEX_SIZE];
     char Hash[HASH_HEX_SIZE];
     int index;
-    Donnee* donnee;
+    donnee* donnee;
     int nonce;      //utile pour la Pow
     struct bloc *lien;
 }*Genesis;
 
-void ajout_block(Donnee* message);
+void ajout_block(donnee* message);
 
 char *toString(struct bloc *blocks, char *str);
 
@@ -39,7 +36,7 @@ void printBlock(struct bloc *blocs);
 
 void printAllBlock(void);
 
-void init_Data(Donnee* data);
+void init_Data(donnee* data);
 
 bool HashMatchesDifficulty(char Hex[HASH_HEX_SIZE]);
 
@@ -52,3 +49,4 @@ bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock);
 void calculHash(struct bloc* Block);
 
 char *Hex_Hash(struct bloc *Bloc, char *output);
+#endif
