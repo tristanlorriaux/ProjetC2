@@ -1,4 +1,12 @@
 #include "blockchain.h"
+#include "openssl/sha.h"
+#include "openssl/crypto.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
 
 /*              Fonctions utilitaires               */
 
@@ -54,7 +62,7 @@ void printAllBlock(void)        //Imprime tous les blocks de la blockchain
 }
 
 
-void init_Data(Donnee* data)        //Initialise le message, l'expéditeur, le destinataire et la date
+void init_Data(donnee* data)        //Initialise le message, l'expéditeur, le destinataire et la date
 {
     strcpy(data->date, "");
     strcpy(data->dest, "");
@@ -176,13 +184,13 @@ char *Hex_Hash(struct bloc *Bloc, char *output)     //Calcul le hachage en Héxa
 
 
 
-void ajout_block(Donnee* message)       //Pour l'ajout d'un nouveau block
+void ajout_block(donnee* message)       //Pour l'ajout d'un nouveau block
 {
 
     if(Genesis==NULL)                   //Initialisation de la blockhain
     {
         Genesis = (struct bloc *)malloc(sizeof(struct bloc));
-        Genesis->donnee = (Donnee*)malloc(sizeof(Donnee));
+        Genesis->donnee = (donnee*)malloc(sizeof(donnee));
         Genesis->lien = NULL;
         Genesis->index = 0;
         Genesis->nonce = 0;
@@ -201,7 +209,7 @@ void ajout_block(Donnee* message)       //Pour l'ajout d'un nouveau block
     }
 
     struct bloc *nouv_bloc = (struct bloc *)malloc(sizeof(struct bloc));
-    nouv_bloc->donnee = (Donnee*)malloc(sizeof(Donnee));
+    nouv_bloc->donnee = (donnee*)malloc(sizeof(donnee));
 
     nouv_bloc->lien = NULL;
     nouv_bloc->donnee = message;
@@ -288,3 +296,4 @@ bool HashMatchesDifficulty(char Hex[HASH_HEX_SIZE])     //Vérifie que le hash p
     checker = strstr(binaryHash, prefix);
     return checker == binaryHash;
 }
+
