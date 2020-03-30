@@ -1,5 +1,5 @@
 # ProjetC2_Blockchain
-![Bottle Design](bottle.png)
+![Bottle Design](Logo Bottle.bmp)
 **BOTTLE : Une messagerie sécurisée écrite en C. Utilise uniquement : C, SDL, OPENSSL.**
 
 Cette application est une simulation de messagerie qui fonctionne grâce aux blockchains. 
