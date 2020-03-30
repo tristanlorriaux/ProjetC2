@@ -1,4 +1,5 @@
 #include "compte.h"
+#include "saisi.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -116,7 +117,7 @@ bool SignUp(TABID* TabID)   //Créer un nouveau compte
     {
         insertElementToTabID(TabID, &Element);
         printf("Nouveau compte créé\n");
-        SaveTabID(TabID, FileName);                     //On enregistre les nouveaux identifiants 
+        SaveTabID(TabID, FileNameID);                     //On enregistre les nouveaux identifiants 
         return true;
     }
     else
@@ -127,13 +128,13 @@ bool SignUp(TABID* TabID)   //Créer un nouveau compte
     
 }
 
-bool SignIn(TABID* TabID)   //S'identifier
+bool SignIn(TABID* TabID, char* exp)   //S'identifier
 {
     struct Identifiant Element;
     printf("Identifiez-vous \n");
     printf("Username : ");
     scanf("%s", Element.username);
-    while(strlen(Element.username)> MAX_WORD_LENGHT) //On test la taille
+    while(strlen(Element.username)> MAX_WORD_LENGHT)    //On test la taille
     {
         printf("Username trop grand\n");
         printf("Username : ");
@@ -141,7 +142,7 @@ bool SignIn(TABID* TabID)   //S'identifier
     }
     printf("Password : ");
     scanf("%s", Element.password);
-    while(strlen(Element.password)>65)              //On test la taille
+    while(strlen(Element.password)>MAX_WORD_LENGHT)     //On test la taille
     {
         printf("Password trop grand\n");
         printf("Password : ");
@@ -150,6 +151,7 @@ bool SignIn(TABID* TabID)   //S'identifier
     if(checkExistenceElementInTabID(TabID, &Element))
     {
         printf("Vous vous êtes bien identifié\n");
+        strcpy(exp, Element.username);                  //ON met à jour la variable exp qui contient le nom de l'expéditeur
         return true;
     }
     else
@@ -158,4 +160,58 @@ bool SignIn(TABID* TabID)   //S'identifier
         return false;
     }
        
+}
+
+char *DisplayUsers(TABID* TabID, char* choice)  //Retourne le choix
+{
+    int taille = TabID->taille;
+    char users[MAX_WORD_LENGHT*NbID];
+    printf("\nAvec qui voulez-vous communiquer?\n");
+    for(int i = 0; i<taille; i++)
+    {
+        printf("%s\n", TabID->ID[i].username);
+        strcat(users, TabID->ID[i].username);
+    }
+    printf("Choix : ");
+    scanf("%s", choice);
+    while(strstr(users, choice) == NULL)
+    {
+        printf("Choix incorrect\n");
+        printf("Choix : ");
+        scanf("%s", choice);
+    }
+    
+    return choice;
+}
+
+void SendMessage(char* dest, char* exp)     //Problème : les messages de plusieurs mots ne sont pas entièrement lu par scanf, il lit juste le premier
+{
+    donnee *Message = (donnee*)malloc(sizeof(donnee));
+    strcpy(Message->dest, dest);
+    strcpy(Message->exp, exp);
+    strcpy(Message->date, "29/03/2020");
+    
+
+    
+    vider_stdin();              //On vide le buffer pour éviter les problèmes
+    printf("Entrez le message : ");
+    Saisi(Message->message);    //On saisi la phrase
+    
+    ajout_block(Message);       //On ajoute le nouveau message à la blockchain
+
+}
+
+void DisplayMessages(char* dest, char* exp)
+{
+    struct bloc *currentbloc = Genesis->premier;
+    int cmpt = 0;
+    printf("Messagerie : \n");
+    while(currentbloc != NULL)    //On parcours toute la blockchain
+    {
+        
+        if(strcmp(dest, currentbloc->donnee->dest) == 0 && strcmp(exp, currentbloc->donnee->exp) == 0 && cmpt<=NbMessages && currentbloc->lien != NULL)
+            printf("%s -> %s [%s] : %s\n", currentbloc->donnee->exp, currentbloc->donnee->dest, currentbloc->donnee->date, currentbloc->donnee->message); //Affichage du message
+        currentbloc=currentbloc->lien;
+        cmpt++;
+    }
 }

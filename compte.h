@@ -4,7 +4,7 @@
 
 1/  -Créer nouveau Compte
     -Se connecter
-2/ Une fois connecté:
+2/ Une fois connecter:
     -Choix de l'utilisateur avec qui connecter
 3/ Affichage de de la conversation et possibilité d'envoie de messages
 
@@ -19,7 +19,8 @@
 
     #define MAX_WORD_LENGHT	29	// Maximum word length à réajuster
     #define NbID 20             // Nombre maximal d'ID 
-    #define FileName "Save.txt"
+    #define FileNameID "SaveID.txt"
+    #define NbMessages 10       //Nb de messages à afficher
 
     struct Identifiant
     {
@@ -41,8 +42,11 @@
     bool checkExistenceElementInTabID(TABID* TabID, struct Identifiant* Element);
     void printTabID(TABID* TabID);
     void SaveTabID(TABID* TabID, const char* TabIDFileName);
-    bool SignIn(TABID* TabID);  //S'identifier, renvoie true si l'identification s'est bien passé
+    bool SignIn(TABID* TabID, char* exp);  //S'identifier, renvoie true si l'identification s'est bien passé
     bool SignUp(TABID* TabID);  //Créer un nouveau compte, renvoie true si la création de compte s'est bien passé
-    char *CryptPassword(struct Identifiant* Element, char *output);
+    char *CryptPassword(struct Identifiant *Element, char *output);
+    char *DisplayUsers(TABID* TabID, char* choice);
+    void SendMessage(char* dest, char* exp);
+    void DisplayMessages(char* dest, char* exp);
 
 #endif
