@@ -3,7 +3,7 @@
 **BOTTLE : Une messagerie sécurisée écrite en C. Utilise uniquement : C, SDL, OPENSSL.**
 
 Cette application est une simulation de messagerie qui fonctionne grâce aux blockchains. 
-Assurant ainsi la sécurité des messages transmis l’application permet aussi la création et la gestion de comptes dont les informations confidentielles sont chiffrées.
+Assurant ainsi la sécurité des messages transmis, l’application permet aussi la création et la gestion de comptes dont les informations confidentielles sont chiffrées.
 
 Installation
 ------------
