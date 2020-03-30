@@ -13,13 +13,13 @@ Installation
 
 ### 2. Installer les librairies :
 
->>>sudo apt-get install libsdl1.2-dev
->>>sudo apt-get install libsdl2-ttf-dev
->>>sudo apt-get install libsdl2-image-dev
+- sudo apt-get install libsdl1.2-dev
+- sudo apt-get install libsdl2-ttf-dev
+- sudo apt-get install libsdl2-image-dev
 
->>>sudo apt-get install libssl-dev  
+- sudo apt-get install libssl-dev  
 
 ### 3. Executer le code une fois compilé (le make est dans les fichiers du code pour compiler sinon) :
 
-->si non compilé : >>>make
->>>./bottle
+(Si non compilé : - make)
+- ./bottle
