@@ -4,9 +4,9 @@
 
 1/  -Créer nouveau Compte
     -Se connecter
-2/ Une fois connecter:
+2/ Une fois connecté:
     -Choix de l'utilisateur avec qui connecter
-3/ Affichage de de la conversation et possibilité d'envoie de messages
+3/ Affichage de de la conversation et possibilité d'envoi de messages
 
 ---------------------------------------------------------*/
 
