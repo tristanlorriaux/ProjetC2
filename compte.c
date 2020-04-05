@@ -18,6 +18,7 @@ void initTabID(TABID *TabID)
 void LoadTabIDFromFile(TABID* TabID, const char* TabIDFileName)
 {
     FILE* file = fopen(TabIDFileName, "r");
+
     int i = 0;
     
     while(fscanf(file, "%s %s", TabID->ID[i].username, TabID->ID[i].password) == 2 && i<NbID)
@@ -26,7 +27,6 @@ void LoadTabIDFromFile(TABID* TabID, const char* TabIDFileName)
     }
         
     TabID->taille = i;
-
     fclose(file);
 }
 
@@ -49,6 +49,7 @@ void insertElementToTabID(TABID* TabID, struct Identifiant* Element)
     strcpy(TabID->ID[taille].username, Element->username);
     strcpy(TabID->ID[taille].password, Element->password);
     TabID->taille++;
+    SaveTabID(TabID, FileNameID);
 }
 
 char *CryptPassword(struct Identifiant* Element, char output[HASH_HEX_SIZE])
@@ -90,42 +91,12 @@ void printTabID(TABID* TabID)
     }
 }
 
-bool SignUp(TABID* TabID)   //Créer un nouveau compte
+void SignUp(TABID* TabID, struct Identifiant* Element)   //Créer un nouveau compte
 {
-    struct Identifiant Element;
-    printf("Username : ");
-    scanf("%s", Element.username);
-    while(strlen(Element.username)> MAX_WORD_LENGHT) //On test la taille
-    {
-        printf("Username trop grand\n");
-        printf("Username : ");
-        scanf("%s", Element.username);
-    }
-    printf("Password : ");
-    scanf("%s", Element.password);
-    while(strlen(Element.password)>65)              //On test la taille
-    {
-        printf("Password trop grand\n");
-        printf("Password : ");
-        scanf("%s", Element.password);
-    }
     char mdp_crypt[HASH_HEX_SIZE];
-    CryptPassword(&Element, mdp_crypt);
-    strcpy(Element.password, mdp_crypt);
-
-    if(!checkExistenceElementInTabID(TabID, &Element))  //On test si les identifiants existent déjà
-    {
-        insertElementToTabID(TabID, &Element);
-        printf("Nouveau compte créé\n");
-        SaveTabID(TabID, FileNameID);                     //On enregistre les nouveaux identifiants 
-        return true;
-    }
-    else
-    {
-        printf("Identifiants déjà existant\n");
-        return false;
-    }  
-    
+    CryptPassword(Element, mdp_crypt);
+    strcpy(Element->password, mdp_crypt);
+    insertElementToTabID(TabID, Element);    
 }
 
 bool SignIn(TABID* TabID, char* exp)   //S'identifier
@@ -162,27 +133,7 @@ bool SignIn(TABID* TabID, char* exp)   //S'identifier
        
 }
 
-char *DisplayUsers(TABID* TabID, char* choice)  //Retourne le choix
-{
-    int taille = TabID->taille;
-    char users[MAX_WORD_LENGHT*NbID];
-    printf("\nAvec qui voulez-vous communiquer?\n");
-    for(int i = 0; i<taille; i++)
-    {
-        printf("%s\n", TabID->ID[i].username);
-        strcat(users, TabID->ID[i].username);
-    }
-    printf("Choix : ");
-    scanf("%s", choice);
-    while(strstr(users, choice) == NULL)
-    {
-        printf("Choix incorrect\n");
-        printf("Choix : ");
-        scanf("%s", choice);
-    }
-    
-    return choice;
-}
+
 
 void SendMessage(char* dest, char* exp)     //Problème : les messages de plusieurs mots ne sont pas entièrement lu par scanf, il lit juste le premier
 {
@@ -201,17 +152,3 @@ void SendMessage(char* dest, char* exp)     //Problème : les messages de plusie
 
 }
 
-void DisplayMessages(char* dest, char* exp)
-{
-    struct bloc *currentbloc = Genesis->premier;
-    int cmpt = 0;
-    printf("Messagerie : \n");
-    while(currentbloc != NULL)    //On parcours toute la blockchain
-    {
-        
-        if(strcmp(dest, currentbloc->donnee->dest) == 0 && strcmp(exp, currentbloc->donnee->exp) == 0 && cmpt<=NbMessages && currentbloc->lien != NULL)
-            printf("%s -> %s [%s] : %s\n", currentbloc->donnee->exp, currentbloc->donnee->dest, currentbloc->donnee->date, currentbloc->donnee->message); //Affichage du message
-        currentbloc=currentbloc->lien;
-        cmpt++;
-    }
-}

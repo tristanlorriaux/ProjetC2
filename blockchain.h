@@ -1,23 +1,26 @@
 #include <stdbool.h>
+
+
 #ifndef BLOCKCHAIN_H
     
     #define BLOCKCHAIN_H
 
-    #define N 200           //Taille max de la blockchain
-    #define MaxMessage 150           //Taille max des messages
-    #define DIFFICULTY 4    //Difficulté de la proof of work
+    #define N 200               //Taille max de la blockchain
+    #define MaxMessage 50      //Taille max des messages
+    #define MAX_WORD_LENGHT	20	// Maximum word length à réajuster pour les mots de passe et identifiants
+    #define DIFFICULTY 4        //Difficulté de la proof of work
     #define FileNameBC "SaveBC.txt"
 
     #define HASH_SIZE 32
     #define HASH_HEX_SIZE 65
     #define BINARY_SIZE (HASH_HEX_SIZE*4+1)
-    #define BLOCK_STR_SIZE 100
+    #define BLOCK_STR_SIZE 400
 
     typedef struct{
         char message[MaxMessage];
-        char exp[20];
-        char dest[20];
-        char date[20];
+        char exp[MAX_WORD_LENGHT];
+        char dest[MAX_WORD_LENGHT];
+        char date[MAX_WORD_LENGHT];
     }donnee;
 
     struct bloc{

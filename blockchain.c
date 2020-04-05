@@ -16,19 +16,13 @@ char *toString(struct bloc *bloc, char *str)    //Conversion d'un block en type 
 {
     if(bloc == NULL)
         return NULL;
-
-    char block_string[BLOCK_STR_SIZE] = {0};
-    char b[3]= {0};
-    char c[32]= {0};
-    sprintf(b, "%d", bloc->index);
-    strcpy(block_string, b);
+    char block_string[BLOCK_STR_SIZE] = "";
+    sprintf(block_string, "%d%d", bloc->index, bloc->nonce);
     strcat(block_string, bloc->precHash);
     strcat(block_string, bloc->donnee->date);
     strcat(block_string, bloc->donnee->dest);
     strcat(block_string, bloc->donnee->exp);
     strcat(block_string, bloc->donnee->message);
-    sprintf(c, "%d", bloc->nonce);
-    strcat(block_string, c);
 
 
     strcpy(str, block_string);
@@ -191,15 +185,15 @@ void initGenesis()
 void ajout_block(donnee* message)       //Pour l'ajout d'un nouveau block
 {
     struct bloc *currentbloc = Genesis->premier;
-    /*while(currentbloc->lien != NULL)    //Idem aux listes chaînées : on parcourt toute la blockchain
-    {
-        currentbloc=currentbloc->lien;
-    }*/
 
     struct bloc *nouv_bloc = (struct bloc *)malloc(sizeof(struct bloc));
     nouv_bloc->donnee = (donnee*)malloc(sizeof(donnee));
-    nouv_bloc->lien = NULL;
-    nouv_bloc->donnee = message;
+    strcpy(nouv_bloc->donnee->date, message->date);
+    strcpy(nouv_bloc->donnee->exp, message->exp);
+    //printf("nouv_bloc->exp : %s\n", nouv_bloc->donnee->exp);
+    strcpy(nouv_bloc->donnee->dest, message->dest);
+
+    strcpy(nouv_bloc->donnee->message, message->message);
     
     if(currentbloc != NULL)
     {
@@ -212,11 +206,9 @@ void ajout_block(donnee* message)       //Pour l'ajout d'un nouveau block
         strcpy(nouv_bloc->precHash, "");
     }
     calculHash(nouv_bloc);
-    
     if(IsValidBlock(nouv_bloc,currentbloc))     //Test de validité du block
     {
-        printf("yo\n");
-        nouv_bloc->lien = currentbloc;          //Ajout du block au débutde la blockchain
+        nouv_bloc->lien = currentbloc;          //Ajout du block au début de la blockchain
         Genesis->premier = nouv_bloc;
         Genesis->taille++;
     }
@@ -262,7 +254,6 @@ void calculHash(struct bloc* Bloc)  //Calcul du Hash d'un block
 {
     Bloc->nonce = 0;        //Mise en place d'une variable nonce qui sera celle qui changera pour modifier le hash (PoW)
     char hash_hex[HASH_HEX_SIZE];
-
     Hex_Hash(Bloc, hash_hex);
     strcpy(Bloc->Hash, hash_hex);
 
@@ -314,7 +305,7 @@ void LoadBlockChainFromFile(char* filename)
     current->donnee = (donnee*)malloc(sizeof(donnee));
     while(fscanf(file, "%s %d %d %s %s %s %s %s", current->precHash,&current->nonce, &current->index, current->Hash, current->donnee->date, current->donnee->dest, current->donnee->exp, current->donnee->message) == 8)
     {
-        printf("hello\n");
+        
         current->lien = Genesis->premier;
         Genesis->premier = current;
         current = (struct bloc *)malloc(sizeof(struct bloc));

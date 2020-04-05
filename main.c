@@ -7,125 +7,45 @@
 
 int main(void)
 {
-    /*int c, n;
-    
-    
-    Genesis = NULL;
-    printf("1. addBlock \n");
-    printf("2. add n random block \n");
-    printf("3. alterNthBlock \n");
-    printf("4. printAllBlock\n");
-    printf("5. verifyChain\n");
-    printf("6. hackChain\n");
-    printf("7. Quitter\n");
-    int start = 1;
-    while(start)
-    {
-        printf("Choice: ");
-        scanf("%d",&c);
-        Donnee *data = (Donnee*)malloc(sizeof(Donnee)); ;
-        init_Data(data);
-        switch(c)
-        {
-            case 1:
-                
-                printf("Entrer message: \n");
-                scanf("%s", data->message);
-                strcpy(data->exp, "moi frero");
-                strcpy(data->dest, "toi mon reuf");
-                strcpy(data->date, "19/03/2020");
-                ajout_block(data);
-                break;
-            case 2:
-                printf("How many blocks to enter?: ");
-                scanf("%d", &n);
-                for(int i = 0; i < n; i++)
-                {
-                    printf("Message à envoyer");
-                    scanf("%s", data->message);
-                    ajout_block(data);
-                }
-                break;
-            case 3:
-                printf("which block to alter?: \n");
-                scanf("%d", &n);
-                printf("enter message: ");
-                scanf("%s", data->message);
-                
-                break;
-            case 4:
-                printAllBlock();
-                break;
-            case 5:
-               
-                break;
-            case 6:
-                //hackChain();
-                break;
-            case 7:
-                start = 0;
-                break;
-            default : break;
-        }
-
-    }*/
-    /*
-    TABID TabID;
+    TABID *TabID = (TABID*)malloc(sizeof(TABID));
     Genesis = (struct genesis*)malloc(sizeof(struct genesis));
-    initGenesis();
-    initTabID(&TabID);
-    LoadTabIDFromFile(&TabID, FileNameID);
-    LoadBlockChainFromFile(FileNameBC);
-    int start = 1;
-    while(start)
-    {
-        printf("\n1/ S'dentifier\n");
-        printf("2/ Créer un nouveau compte\n");
-        printf("3/ Quitter\n");
-        printf("Choix : ");
-        int choix;
-        int connect = 0;            //Variable pour savoir si on est connecté
-        char exp[MAX_WORD_LENGHT];  //string contenant le nom de l'expéditeur
-        scanf("%d", &choix);
-        switch(choix)
-        {
-            case 1:                
-                while(!SignIn(&TabID, exp));
-                connect = 1;
-                break;
-            case 2:
-                while(!SignUp(&TabID));
-                break;
-            case 3:
-                start = 0;
-                break;
-        }
-        if(connect)
-        {
-            char choice[MAX_WORD_LENGHT];
-            char *dest = DisplayUsers(&TabID, choice);
-            if(Genesis->premier != NULL)
-                DisplayMessages(dest, exp);
-            SendMessage(dest,exp);
-            printAllBlock();
-        }
-          
-                
-    }
-    SaveBlockChain(FileNameBC);*/
     Data *Bottle = (Data*)malloc(sizeof(Data));
+    initTabID(TabID);
+    initGenesis();
     init_global(Bottle);
-
-    /*-------------------------Affichage d'une texture-------------------------*/
     
-    /*-------------------------------------------------------------------------*/
+
+    LoadTabIDFromFile(TabID, FileNameID);
+
+    LoadBlockChainFromFile(FileNameBC); //On le fait 2 fois car la blockchain a été codé comme une pile et quand on sauvegarde et charge 1 fois un inverse le sens
+    SaveBlockChain(FileNameBC);
+    initGenesis();
+    LoadBlockChainFromFile(FileNameBC);
+    
+    /*-------------------------Affichage d'une texture-------------------------*/
+    SDL_RenderCopy(Bottle->Main_Renderer, Bottle->menu_Texture, NULL, NULL);
+    SDL_RenderPresent(Bottle->Main_Renderer);
+    
+    /*-------------------------------------------------------------------------*/  
+
     int m = 1;
     int x = 0; //Position de la souris
     int y = 0;
+    char exp[MAX_WORD_LENGHT];
+    char dest[MAX_WORD_LENGHT] = "";
+    char texte[MaxMessage]; //Message à ajouter dans la blockchain
+    int connect = 0;        //Variable pour savoir si on est connecté
+    int messagerie = 0;     //Egale à 1 quand on passe à la messagerie
+    int choix_dest = 0;     //On passe à la phase choix de destinataire quand c'est égale à 1
+    Message *mes = (Message*)malloc(sizeof(Message));
+    donnee *message = (donnee*)malloc(sizeof(donnee));
+    mes->couleur.b = 0;
+    mes->couleur.a = 0;
+    mes->couleur.r = 0;
+    mes->couleur.g = 0;
     while(m != 0)
     {
-        SDL_RenderCopy(Bottle->Main_Renderer, Bottle->menu_Texture, NULL, NULL);
-        SDL_RenderPresent(Bottle->Main_Renderer);
+
         SDL_Event event;
         while(SDL_PollEvent(&event))
         {
@@ -139,18 +59,79 @@ int main(void)
                     y = event.button.y;
                     if(x > 600 && x < 960 && y > 285 && y<335)  //Se connecter
                     {
-                        m = Display_Connecter(Bottle);
+                        SDL_RenderCopy(Bottle->Main_Renderer, Bottle->connexion_Texture, NULL, NULL);
+                        SDL_RenderPresent(Bottle->Main_Renderer);
+                        m = Connecter(Bottle, TabID, &connect,exp,0);
                     }
                     if(x > 600 && x < 1290 && y>425 && y<462)   //Créer un compte
                     {
-                        printf("mdr\n");
+                        SDL_RenderCopy(Bottle->Main_Renderer, Bottle->compte_Texture, NULL, NULL);
+                        SDL_RenderPresent(Bottle->Main_Renderer);
+                        m = CreerCompte(Bottle, TabID);
                     }
                     continue;
             }
         }
+        while(connect && m)
+        {
+            mes->textRect.x = 100;      //La position du message
+            mes->textRect.y = 228;
+            mes->textRect.h = 35;       //Choisir la longeur du message
+            mes->textRect.w = 25;       //Choisir la largeur du message
+            mes->tailleP = 30;
+            messagerie = 0;
+            choix_dest = 1;
+            DisplayUsers(TabID, Bottle);
+            while(choix_dest && m)
+            {  
+                if(BarreSaisie(dest, mes, Bottle))
+                {
+                    m=0;    //On a appuyé sur la croix
+                }
+                if(IsValidUsername(dest, TabID)) //ON test si le choix est valide , A CHANGER
+                {
+                    messagerie = 1;
+                }
+                choix_dest = 0;
+            }
+            while(messagerie && m)
+            {
+                SDL_RenderCopy(Bottle->Main_Renderer, Bottle->messagerie_Texture, NULL, NULL);
+                SDL_RenderPresent(Bottle->Main_Renderer);
+                DisplayMessagerie(exp, dest, Bottle);
+                strcpy(texte,"");
+                mes->textRect.x = 30;   //On change la position de la barre de saisie
+                mes->textRect.y = 670;
+                switch(BarreSaisieMessagerie(texte, mes, Bottle))
+                {
+                    case 1: //Quitter
+                        m=0;
+                        break;
+                    case 2: //Retour au menu
+                        connect = 0;
+                        messagerie = 0;
+                        SDL_RenderCopy(Bottle->Main_Renderer, Bottle->menu_Texture, NULL, NULL);
+                        SDL_RenderPresent(Bottle->Main_Renderer);
+                        break;
+                    case 0: //Envoie du message
+                        strcpy(message->exp,exp);
+                        strcpy(message->dest, dest);
+                        strcpy(message->message, texte);
+                        strcpy(message->date, "03/04/2020");
+                        ajout_block(message);
+                        printAllBlock();
+                        SaveBlockChain(FileNameBC);
+                        break;
+                }
+                
+            }
+            
+
+            //connect = 0;
+        }
     }   
     
-
+    TTF_Quit();
     SDL_Quit();
 
     return 0;

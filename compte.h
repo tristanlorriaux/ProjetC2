@@ -4,28 +4,30 @@
 
 1/  -Créer nouveau Compte
     -Se connecter
-2/ Une fois connecté:
+2/ Une fois connecter:
     -Choix de l'utilisateur avec qui connecter
-3/ Affichage de de la conversation et possibilité d'envoi de messages
+3/ Affichage de de la conversation et possibilité d'envoie de messages
 
 ---------------------------------------------------------*/
 
 #include <stdbool.h>
+#include "blockchain.h"
 
 #ifndef COMPTE_H
 
     #define COMPTE_H
     
 
-    #define MAX_WORD_LENGHT	29	// Maximum word length à réajuster
-    #define NbID 20             // Nombre maximal d'ID 
+    
+
+    #define NbID 5            // Nombre maximal d'ID 
     #define FileNameID "SaveID.txt"
-    #define NbMessages 10       //Nb de messages à afficher
+    
 
     struct Identifiant
     {
         char username[MAX_WORD_LENGHT];
-        char password[65];
+        char password[HASH_HEX_SIZE];
     };
 
     typedef struct 
@@ -43,10 +45,8 @@
     void printTabID(TABID* TabID);
     void SaveTabID(TABID* TabID, const char* TabIDFileName);
     bool SignIn(TABID* TabID, char* exp);  //S'identifier, renvoie true si l'identification s'est bien passé
-    bool SignUp(TABID* TabID);  //Créer un nouveau compte, renvoie true si la création de compte s'est bien passé
+    void SignUp(TABID* TabID, struct Identifiant* Element);  //Créer un nouveau compte, renvoie true si la création de compte s'est bien passé
     char *CryptPassword(struct Identifiant *Element, char *output);
-    char *DisplayUsers(TABID* TabID, char* choice);
     void SendMessage(char* dest, char* exp);
-    void DisplayMessages(char* dest, char* exp);
 
 #endif
