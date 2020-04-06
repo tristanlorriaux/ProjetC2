@@ -26,7 +26,7 @@ Installation
 
 ### 4. Fonctionnalités :
 
-- ###Créer un nouveau compte : Vous pouvez créer un compte en écrivant votre identifiant et votre mot de passe
+- Créer un nouveau compte : Vous pouvez créer un compte en écrivant votre identifiant et votre mot de passe
 ![Bottle Design](images/compte.bmp)
 Cependant il est seulement possible de créer 5 comptes différents
 Il n'y a pas de bouton pour supprimer un compte donc il faut directement supprimer la ligne correspondante dans le fichier SaveID.txt
