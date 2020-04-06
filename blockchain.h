@@ -49,7 +49,8 @@
     bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock);
     void calculHash(struct bloc* Block);
     char *Hex_Hash(struct bloc *Bloc, char *output);
-    void LoadBlockChainFromFile(char* filename);
+    void LoadBlockChainFromFile1(char* filename);
+    void LoadBlockChainFromFile2(char* filename);
     void SaveBlockChain(char* filename);
     void initGenesis();
     char* getTime(char* Time);

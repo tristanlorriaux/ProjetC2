@@ -17,7 +17,7 @@ int main(void)
 
     LoadTabIDFromFile(TabID, FileNameID);
 
-    LoadBlockChainFromFile(FileNameBC); //On le fait 2 fois car la blockchain a été codé comme une pile et quand on sauvegarde et charge 1 fois un inverse le sens
+    LoadBlockChainFromFile1(FileNameBC); //On le fait 2 fois car la blockchain a été codé comme une pile et quand on sauvegarde et charge 1 fois un inverse le sens
     /*SaveBlockChain(FileNameBC);
     initGenesis();
     LoadBlockChainFromFile(FileNameBC);*/
@@ -119,7 +119,6 @@ int main(void)
                         strcpy(message->dest, dest);
                         
                         strcpy(message->message, texte);
-                        printf("%s\n", message->message);
                         strcpy(message->date, getTime(Time));
                         ajout_block(message);
                         //printAllBlock();
@@ -127,10 +126,10 @@ int main(void)
                         /*On save et Load 2 fois car la blockchain a été codé comme une pile et donc save inverse le sens de la pile*/
                         SaveBlockChain(FileNameBC);
                         initGenesis();
-                        LoadBlockChainFromFile(FileNameBC);
+                        LoadBlockChainFromFile2(FileNameBC);
                         SaveBlockChain(FileNameBC);
                         initGenesis();
-                        LoadBlockChainFromFile(FileNameBC);
+                        LoadBlockChainFromFile2(FileNameBC);
                         break;
                 }
                 

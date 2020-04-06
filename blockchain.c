@@ -225,6 +225,7 @@ void ajout_block(donnee* message)       //Pour l'ajout d'un nouveau block
         strcpy(nouv_bloc->precHash, "0");
     }
     calculHash(nouv_bloc);
+    printBlock(nouv_bloc);
     if(IsValidBlock(nouv_bloc,currentbloc))     //Test de validité du block
     {
         nouv_bloc->lien = currentbloc;          //Ajout du block au début de la blockchain
@@ -241,9 +242,10 @@ void ajout_block(donnee* message)       //Pour l'ajout d'un nouveau block
 
 bool IsValidBlock(struct bloc* newBlock, struct bloc* previousBlock)    //Test de la validité d'un block
 {
-    char hash_to_test[HASH_HEX_SIZE]={0};
+    char hash_to_test[HASH_HEX_SIZE];
 
     Hex_Hash(newBlock, hash_to_test);
+    
     if(previousBlock != NULL)
     {
         if (previousBlock->index + 1 != newBlock->index)    //Index exact?
@@ -317,7 +319,53 @@ void SaveBlockChain(char* filename)
     fclose(file);
 }
 
-void LoadBlockChainFromFile(char* filename)
+void LoadBlockChainFromFile1(char* filename)
+{
+    FILE* file = fopen(filename, "r");
+    struct bloc *current = (struct bloc *)malloc(sizeof(struct bloc));
+    current->donnee = (donnee*)malloc(sizeof(donnee));
+    struct bloc *previous = (struct bloc *)malloc(sizeof(struct bloc));
+    char jour[10];   //Mon Tue ...
+    char mois[10];   //Mar Apr..
+    char jourM[10];   //1 22 ou 12
+    char heure[10];
+    char annee[10];
+                             //0c7b0cfd110a8d979fb2b42091790609825a2050efa9176d88f09b81e156333d 17 2 0ea22659df682dfd90dcb462f77f4721ffbdd506f663ccf45736ab849b6b13fd Mon Apr  6 16:25:28 2020 TRISTAN LUCAS DR
+    while(fscanf(file, "%s %d %d %s %s %s  %s %s %s %s %s %s\n", current->precHash,&current->nonce, &current->index, current->Hash, jour, mois, jourM, heure, annee, current->donnee->dest, current->donnee->exp, current->donnee->message) == 12)
+    {
+        strcpy(current->donnee->date, "");
+        strcat(current->donnee->date, jour);
+        strcat(current->donnee->date, " ");
+        strcat(current->donnee->date, mois);
+        strcat(current->donnee->date, "  ");
+        strcat(current->donnee->date, jourM);
+        strcat(current->donnee->date, " ");
+        strcat(current->donnee->date, heure);
+        strcat(current->donnee->date, " ");
+        strcat(current->donnee->date, annee);
+
+        current->lien = Genesis->premier;        
+        previous = current->lien;
+
+        if(IsValidBlock(current, previous))
+        {
+            Genesis->premier = current;
+        }
+        else
+        {
+            fclose(file);
+            file = fopen(filename, "w");    //On supprime le contenue de SaveBC
+            fclose(file);
+            initGenesis();
+            return;
+        }     
+        current = (struct bloc *)malloc(sizeof(struct bloc));
+        current->donnee = (donnee*)malloc(sizeof(donnee));
+    }
+    fclose(file);
+}
+
+void LoadBlockChainFromFile2(char* filename)
 {
     FILE* file = fopen(filename, "r");
     struct bloc *current = (struct bloc *)malloc(sizeof(struct bloc));
@@ -340,8 +388,8 @@ void LoadBlockChainFromFile(char* filename)
         strcat(current->donnee->date, heure);
         strcat(current->donnee->date, " ");
         strcat(current->donnee->date, annee);
-        strcat(current->donnee->date, " ");
-        current->lien = Genesis->premier;
+
+        current->lien = Genesis->premier;        
         Genesis->premier = current;
         current = (struct bloc *)malloc(sizeof(struct bloc));
         current->donnee = (donnee*)malloc(sizeof(donnee));
