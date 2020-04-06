@@ -28,4 +28,11 @@ Installation
 
 - Créer un nouveau compte : Vous pouvez créer un compte en écrivant votre identifiant et votre mot de passe
 ![Bottle Design](images/compte.bmp)
+Cependant il est seulement possible de créer 5 comptes différents
+Il n'y a pas de bouton pour supprimer un compte donc il faut directement supprimer la ligne correspondante dans le fichier SaveID.txt
 
+- Se connecter :  Pour vous connecter il suffit de rentrer les identifiants préalablement créer et si vous vous tromper appuyez sur le bouton retour
+
+- Choisir un destinataire : Rentrez directement le nom du destinataire que vous souhaitez parmi les choix proposé
+
+- Envoyer des messages : Communiquez directement avec les autres utilisateurs via la messagerie qui affichera les derniers messages de la conversation. Si vous voulez changer de destinataire appuyez sur le bouton retour et reconnectez-vous.
