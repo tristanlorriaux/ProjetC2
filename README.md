@@ -23,3 +23,8 @@ Installation
 
 (Si non compilé : - make)
 - ./bottle
+
+### 4. Fonctionnalités :
+
+- Créer un nouveau compte : Vous pouvez créer un compte en écrivant votre identifiant et votre mot de passe
+
