@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 
 
@@ -176,6 +177,24 @@ char *Hex_Hash(struct bloc *Bloc, char *output)     //Calcul le hachage en Héxa
 
 /*              Fonctions Principales               */
 
+char* getTime(char* Time)
+{
+    time_t rawtime;
+    struct tm *info;
+    time( &rawtime );
+    
+    info = localtime( &rawtime );
+    char str2[30];
+
+    /* copy to sized buffer (overflow safe): */
+    strncpy ( str2, asctime(info), sizeof(str2) );
+
+    /* partial copy (only 5 chars): */
+    strncpy ( Time, str2, 24 );
+    Time[24] = '\0';   /* null character manually added */
+    return Time;
+}
+
 void initGenesis()
 {
     Genesis->premier = NULL;
@@ -203,7 +222,7 @@ void ajout_block(donnee* message)       //Pour l'ajout d'un nouveau block
     else
     {
         nouv_bloc->index = 1;
-        strcpy(nouv_bloc->precHash, "");
+        strcpy(nouv_bloc->precHash, "0");
     }
     calculHash(nouv_bloc);
     if(IsValidBlock(nouv_bloc,currentbloc))     //Test de validité du block
@@ -303,9 +322,25 @@ void LoadBlockChainFromFile(char* filename)
     FILE* file = fopen(filename, "r");
     struct bloc *current = (struct bloc *)malloc(sizeof(struct bloc));
     current->donnee = (donnee*)malloc(sizeof(donnee));
-    while(fscanf(file, "%s %d %d %s %s %s %s %s", current->precHash,&current->nonce, &current->index, current->Hash, current->donnee->date, current->donnee->dest, current->donnee->exp, current->donnee->message) == 8)
+    char jour[10];   //Mon Tue ...
+    char mois[10];   //Mar Apr..
+    char jourM[10];   //1 22 ou 12
+    char heure[10];
+    char annee[10];
+                             //0c7b0cfd110a8d979fb2b42091790609825a2050efa9176d88f09b81e156333d 17 2 0ea22659df682dfd90dcb462f77f4721ffbdd506f663ccf45736ab849b6b13fd Mon Apr  6 16:25:28 2020 TRISTAN LUCAS DR
+    while(fscanf(file, "%s %d %d %s %s %s  %s %s %s %s %s %s\n", current->precHash,&current->nonce, &current->index, current->Hash, jour, mois, jourM, heure, annee, current->donnee->dest, current->donnee->exp, current->donnee->message) == 12)
     {
-        
+        strcpy(current->donnee->date, "");
+        strcat(current->donnee->date, jour);
+        strcat(current->donnee->date, " ");
+        strcat(current->donnee->date, mois);
+        strcat(current->donnee->date, "  ");
+        strcat(current->donnee->date, jourM);
+        strcat(current->donnee->date, " ");
+        strcat(current->donnee->date, heure);
+        strcat(current->donnee->date, " ");
+        strcat(current->donnee->date, annee);
+        strcat(current->donnee->date, " ");
         current->lien = Genesis->premier;
         Genesis->premier = current;
         current = (struct bloc *)malloc(sizeof(struct bloc));

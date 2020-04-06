@@ -1,5 +1,4 @@
 #include "compte.h"
-#include "saisi.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -99,56 +98,7 @@ void SignUp(TABID* TabID, struct Identifiant* Element)   //Créer un nouveau com
     insertElementToTabID(TabID, Element);    
 }
 
-bool SignIn(TABID* TabID, char* exp)   //S'identifier
-{
-    struct Identifiant Element;
-    printf("Identifiez-vous \n");
-    printf("Username : ");
-    scanf("%s", Element.username);
-    while(strlen(Element.username)> MAX_WORD_LENGHT)    //On test la taille
-    {
-        printf("Username trop grand\n");
-        printf("Username : ");
-        scanf("%s", Element.username);
-    }
-    printf("Password : ");
-    scanf("%s", Element.password);
-    while(strlen(Element.password)>MAX_WORD_LENGHT)     //On test la taille
-    {
-        printf("Password trop grand\n");
-        printf("Password : ");
-        scanf("%s", Element.password);
-    }
-    if(checkExistenceElementInTabID(TabID, &Element))
-    {
-        printf("Vous vous êtes bien identifié\n");
-        strcpy(exp, Element.username);                  //ON met à jour la variable exp qui contient le nom de l'expéditeur
-        return true;
-    }
-    else
-    {
-        printf("Username ou password incorrect\n");
-        return false;
-    }
-       
-}
 
 
 
-void SendMessage(char* dest, char* exp)     //Problème : les messages de plusieurs mots ne sont pas entièrement lu par scanf, il lit juste le premier
-{
-    donnee *Message = (donnee*)malloc(sizeof(donnee));
-    strcpy(Message->dest, dest);
-    strcpy(Message->exp, exp);
-    strcpy(Message->date, "29/03/2020");
-    
-
-    
-    vider_stdin();              //On vide le buffer pour éviter les problèmes
-    printf("Entrez le message : ");
-    Saisi(Message->message);    //On saisi la phrase
-    
-    ajout_block(Message);       //On ajoute le nouveau message à la blockchain
-
-}
 

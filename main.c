@@ -18,9 +18,9 @@ int main(void)
     LoadTabIDFromFile(TabID, FileNameID);
 
     LoadBlockChainFromFile(FileNameBC); //On le fait 2 fois car la blockchain a été codé comme une pile et quand on sauvegarde et charge 1 fois un inverse le sens
-    SaveBlockChain(FileNameBC);
+    /*SaveBlockChain(FileNameBC);
     initGenesis();
-    LoadBlockChainFromFile(FileNameBC);
+    LoadBlockChainFromFile(FileNameBC);*/
     
     /*-------------------------Affichage d'une texture-------------------------*/
     SDL_RenderCopy(Bottle->Main_Renderer, Bottle->menu_Texture, NULL, NULL);
@@ -34,6 +34,7 @@ int main(void)
     char exp[MAX_WORD_LENGHT];
     char dest[MAX_WORD_LENGHT] = "";
     char texte[MaxMessage]; //Message à ajouter dans la blockchain
+    char Time[30];
     int connect = 0;        //Variable pour savoir si on est connecté
     int messagerie = 0;     //Egale à 1 quand on passe à la messagerie
     int choix_dest = 0;     //On passe à la phase choix de destinataire quand c'est égale à 1
@@ -116,11 +117,20 @@ int main(void)
                     case 0: //Envoie du message
                         strcpy(message->exp,exp);
                         strcpy(message->dest, dest);
+                        
                         strcpy(message->message, texte);
-                        strcpy(message->date, "03/04/2020");
+                        printf("%s\n", message->message);
+                        strcpy(message->date, getTime(Time));
                         ajout_block(message);
-                        printAllBlock();
+                        //printAllBlock();
+
+                        /*On save et Load 2 fois car la blockchain a été codé comme une pile et donc save inverse le sens de la pile*/
                         SaveBlockChain(FileNameBC);
+                        initGenesis();
+                        LoadBlockChainFromFile(FileNameBC);
+                        SaveBlockChain(FileNameBC);
+                        initGenesis();
+                        LoadBlockChainFromFile(FileNameBC);
                         break;
                 }
                 

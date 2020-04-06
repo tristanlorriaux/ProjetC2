@@ -435,7 +435,7 @@ int BarreSaisieMessagerie(char* texte, Message* mes, Data* Bottle)
             {
                 case SDL_KEYDOWN:
                                     
-                    if(event.key.keysym.sym != SDLK_CAPSLOCK && strlen(texte)<=MaxMessage && strlen(SDL_GetKeyName(event.key.keysym.sym)) <= 1)
+                    if(event.key.keysym.sym != SDLK_CAPSLOCK && strlen(texte)<=14 && strlen(SDL_GetKeyName(event.key.keysym.sym)) <= 1)
                     {   
                         strcat(texte,SDL_GetKeyName(event.key.keysym.sym));
                         strcpy(mes->texte, SDL_GetKeyName(event.key.keysym.sym));
@@ -444,7 +444,7 @@ int BarreSaisieMessagerie(char* texte, Message* mes, Data* Bottle)
                     }
                     if(event.key.keysym.sym == SDLK_SPACE)
                     {
-                        strcat(texte," ");
+                        strcat(texte,"_");
                         mes->textRect.x += 25;
                     }
                     if(event.key.keysym.sym == SDLK_RETURN)

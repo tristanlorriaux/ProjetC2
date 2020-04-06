@@ -20,7 +20,7 @@
         char message[MaxMessage];
         char exp[MAX_WORD_LENGHT];
         char dest[MAX_WORD_LENGHT];
-        char date[MAX_WORD_LENGHT];
+        char date[50];
     }donnee;
 
     struct bloc{
@@ -52,4 +52,5 @@
     void LoadBlockChainFromFile(char* filename);
     void SaveBlockChain(char* filename);
     void initGenesis();
+    char* getTime(char* Time);
 #endif

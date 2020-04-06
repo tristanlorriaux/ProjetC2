@@ -44,9 +44,7 @@
     bool checkExistenceElementInTabID(TABID* TabID, struct Identifiant* Element);
     void printTabID(TABID* TabID);
     void SaveTabID(TABID* TabID, const char* TabIDFileName);
-    bool SignIn(TABID* TabID, char* exp);  //S'identifier, renvoie true si l'identification s'est bien passé
     void SignUp(TABID* TabID, struct Identifiant* Element);  //Créer un nouveau compte, renvoie true si la création de compte s'est bien passé
     char *CryptPassword(struct Identifiant *Element, char *output);
-    void SendMessage(char* dest, char* exp);
 
 #endif
