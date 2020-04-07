@@ -225,7 +225,6 @@ void ajout_block(donnee* message)       //Pour l'ajout d'un nouveau block
         strcpy(nouv_bloc->precHash, "0");
     }
     calculHash(nouv_bloc);
-    printBlock(nouv_bloc);
     if(IsValidBlock(nouv_bloc,currentbloc))     //Test de validité du block
     {
         nouv_bloc->lien = currentbloc;          //Ajout du block au début de la blockchain
