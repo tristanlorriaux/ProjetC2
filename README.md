@@ -8,7 +8,7 @@ Assurant ainsi la sécurité des messages transmis, l’application permet aussi
 Installation
 ------------
 
-### 1. Télécharger le code (optionnel si le code est déjà compilé et sous forme executable)
+### 1. Télécharger le code
 
 
 ### 2. Installer les librairies :
@@ -19,9 +19,9 @@ Installation
 
 - sudo apt-get install libssl-dev  
 
-### 3. Executer le code une fois compilé (le make est dans les fichiers du code pour compiler sinon) :
+### 3. Executer le code une fois compilé:
 
-(Si non compilé : - make)
+- make)
 - ./bottle
 
 ### 4. Fonctionnalités :
