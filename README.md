@@ -21,7 +21,7 @@ Installation
 
 ### 3. Executer le code une fois compilé:
 
-- make)
+- make
 - ./bottle
 
 ### 4. Fonctionnalités :
